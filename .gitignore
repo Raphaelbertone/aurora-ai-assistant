@@ -1,0 +1,51 @@
+# Ambiente virtual Python
+.venv/
+venv/
+env/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Configurações locais
+.env
+.env.*
+!.env.exemplo
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Índices vetoriais gerados localmente
+embeddings/faiss_index/
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Configurações do VS Code
+.vscode/
+
+# Arquivos de teste e cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Arquivos de distribuição
+build/
+dist/
+*.egg-info/
+
+# Banco de dados local
+*.db
+*.sqlite
+*.sqlite3
+
+# Arquivos pessoais
+*.bak
+*.backup
