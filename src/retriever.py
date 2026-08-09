@@ -4,7 +4,10 @@ from langchain_core.vectorstores import VectorStoreRetriever
 from src.config import QUANTIDADE_RESULTADOS
 from src.vectorstore import carregar_base_vetorial
 
+from functools import lru_cache
 
+
+@lru_cache(maxsize=4)
 def obter_retriever(
     quantidade_resultados: int = QUANTIDADE_RESULTADOS,
 ) -> VectorStoreRetriever:
