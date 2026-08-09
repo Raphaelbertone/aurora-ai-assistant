@@ -12,11 +12,11 @@ DIRETORIO_DOCUMENTOS = DIRETORIO_RAIZ / "documentos"
 DIRETORIO_FAISS = DIRETORIO_RAIZ / "data" / "faiss"
 
 
-# Modelos utilizados pelo Ollama
 MODELO_VETORIZACAO_OLLAMA = os.getenv(
     "MODELO_VETORIZACAO_OLLAMA",
     "bge-m3:567m",
 )
+
 
 MODELO_LINGUAGEM_OLLAMA = os.getenv(
     "MODELO_LINGUAGEM_OLLAMA",
@@ -36,5 +36,5 @@ SOBREPOSICAO_FRAGMENTO = int(
 
 # Quantidade padrão de resultados recuperados
 QUANTIDADE_RESULTADOS = int(
-    os.getenv("QUANTIDADE_RESULTADOS", "4")
+    os.getenv("QUANTIDADE_RESULTADOS", "6")
 )
