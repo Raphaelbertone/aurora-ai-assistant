@@ -17,6 +17,7 @@ __pycache__/
 .ipynb_checkpoints/
 
 # Índices vetoriais gerados localmente
+data/faiss/
 embeddings/faiss_index/
 
 # Arquivos temporários
