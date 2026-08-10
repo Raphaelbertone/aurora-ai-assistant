@@ -43,6 +43,53 @@ TERMOS_OPERACIONAIS = (
     "disponibilidade",
 )
 
+TERMOS_PEDIDO_MIDIA = (
+    "tem foto",
+    "tem fotos",
+    "tem imagem",
+    "tem imagens",
+    "mostra foto",
+    "mostra fotos",
+    "mostre foto",
+    "mostre fotos",
+    "mostrar foto",
+    "mostrar fotos",
+    "quero ver",
+    "ver foto",
+    "ver fotos",
+    "galeria",
+)
+
+TERMOS_CONSULTA_INFORMACAO = (
+    "quanto custa",
+    "preco",
+    "valor",
+    "tarifa",
+    "diaria",
+    "horario",
+    "check-in",
+    "check in",
+    "check-out",
+    "check out",
+    "como funciona",
+    "disponibilidade",
+    "qual",
+    "quais",
+    "o que",
+    "onde",
+    "quando",
+    "por que",
+    "comodidades",
+    "servicos",
+    "servico",
+    "inclui",
+    "possui",
+    "oferece",
+    "capacidade",
+    "quantos",
+    "quantas",
+)
+
 
 def normalizar_texto(texto: str) -> str:
     """Normaliza texto para comparação semântica simples por termos."""
@@ -60,6 +107,34 @@ def normalizar_texto(texto: str) -> str:
     texto = re.sub(r"\s+", " ", texto)
 
     return texto.strip()
+
+
+def e_pedido_apenas_visual(pergunta: str) -> bool:
+    """
+    Identifica pedidos que solicitam apenas mídia,
+    sem uma pergunta informacional adicional.
+    """
+
+    pergunta_normalizada = normalizar_texto(
+        pergunta
+    )
+
+    pedido_midia = any(
+        normalizar_texto(termo)
+        in pergunta_normalizada
+        for termo in TERMOS_PEDIDO_MIDIA
+    )
+
+    consulta_informacao = any(
+        normalizar_texto(termo)
+        in pergunta_normalizada
+        for termo in TERMOS_CONSULTA_INFORMACAO
+    )
+
+    return (
+        pedido_midia
+        and not consulta_informacao
+    )
 
 
 @lru_cache(maxsize=1)
@@ -222,16 +297,22 @@ def _e_pedido_galeria_ampla(pergunta_normalizada: str) -> bool:
     """Identifica pedidos explícitos por uma coleção de imagens."""
 
     padroes = (
-        "fotos dos quartos",
-        "fotos das acomodacoes",
-        "imagens dos quartos",
-        "imagens das acomodacoes",
-        "galeria dos quartos",
-        "galeria das acomodacoes",
-        "fotos da pousada",
-        "imagens da pousada",
-        "galeria da pousada",
-    )
+    "foto dos quartos",
+    "fotos dos quartos",
+    "foto das acomodacoes",
+    "fotos das acomodacoes",
+    "imagem dos quartos",
+    "imagens dos quartos",
+    "imagem das acomodacoes",
+    "imagens das acomodacoes",
+    "galeria dos quartos",
+    "galeria das acomodacoes",
+    "foto da pousada",
+    "fotos da pousada",
+    "imagem da pousada",
+    "imagens da pousada",
+    "galeria da pousada",
+)
 
     return any(
         padrao in pergunta_normalizada
