@@ -37,7 +37,12 @@ MODELO_LINGUAGEM_OLLAMA = os.getenv(
 # Modelo de linguagem utilizado pela Groq
 MODELO_LINGUAGEM_GROQ = os.getenv(
     "MODELO_LINGUAGEM_GROQ",
-    "llama-3.3-70b-versatile",
+    "openai/gpt-oss-120b",
+)
+
+MODELO_LINGUAGEM_GROQ_FALLBACK = os.getenv(
+    "MODELO_LINGUAGEM_GROQ_FALLBACK",
+    "openai/gpt-oss-20b",
 )
 
 # Configuração da fragmentação
