@@ -1,0 +1,261 @@
+{
+  "versao": "2.1",
+  "imagens": [
+    {
+      "id": "fachada",
+      "titulo": "Pousada Mirante do Pôr do Sol",
+      "arquivo": "assets/imagens/pousada/fachada.png",
+      "categoria": "pousada",
+      "alt": "Fachada da Pousada Mirante do Pôr do Sol ao entardecer",
+      "prioridade": 1,
+      "ordem_galeria": 1,
+      "termos": [
+        "pousada",
+        "fachada",
+        "entrada",
+        "hotel",
+        "predio",
+        "prédio",
+        "foto da pousada",
+        "imagem da pousada"
+      ],
+      "gatilhos_automaticos": [
+        "como e a pousada",
+        "como é a pousada",
+        "fachada da pousada",
+        "entrada da pousada"
+      ]
+    },
+    {
+      "id": "deck_por_do_sol",
+      "titulo": "Deck do Pôr do Sol",
+      "arquivo": "assets/imagens/deck/deck_por_do_sol.png",
+      "categoria": "experiencia",
+      "alt": "Deck panorâmico da pousada durante o pôr do sol",
+      "prioridade": 1,
+      "ordem_galeria": 3,
+      "termos": [
+        "deck",
+        "deck do por do sol",
+        "deck do pôr do sol",
+        "por do sol",
+        "pôr do sol",
+        "sunset",
+        "mirante",
+        "happy hour",
+        "pedido de casamento"
+      ],
+      "gatilhos_automaticos": [
+        "onde assistir ao por do sol",
+        "onde assistir ao pôr do sol",
+        "onde ver o por do sol",
+        "onde ver o pôr do sol",
+        "assistir ao por do sol",
+        "assistir ao pôr do sol",
+        "ver o por do sol",
+        "ver o pôr do sol",
+        "melhor lugar para assistir ao por do sol",
+        "melhor lugar para assistir ao pôr do sol",
+        "melhor lugar para ver o por do sol",
+        "melhor lugar para ver o pôr do sol",
+        "happy hour",
+        "pedido de casamento",
+        "pedir em casamento"
+]
+    },
+    {
+      "id": "standard_casal",
+      "titulo": "Quarto Standard Casal",
+      "arquivo": "assets/imagens/acomodacoes/standard_casal.png",
+      "categoria": "acomodacao",
+      "alt": "Quarto Standard Casal da pousada",
+      "prioridade": 6,
+      "ordem_galeria": 1,
+      "termos": [
+        "standard casal",
+        "quarto standard casal",
+        "quarto casal",
+        "quarto para casal"
+      ],
+      "gatilhos_automaticos": [
+        "standard casal"
+      ]
+    },
+    {
+      "id": "standard_familia",
+      "titulo": "Quarto Standard Família",
+      "arquivo": "assets/imagens/acomodacoes/standard_familia.png",
+      "categoria": "acomodacao",
+      "alt": "Quarto Standard Família da pousada",
+      "prioridade": 5,
+      "ordem_galeria": 2,
+      "termos": [
+        "standard familia",
+        "standard família",
+        "quarto standard familia",
+        "quarto standard família",
+        "quarto familia",
+        "quarto família"
+      ],
+      "gatilhos_automaticos": [
+        "standard familia",
+        "standard família",
+        "quarto para familia",
+        "quarto para família"
+      ]
+    },
+    {
+      "id": "suite_superior",
+      "titulo": "Suíte Superior",
+      "arquivo": "assets/imagens/acomodacoes/suite_superior.png",
+      "categoria": "acomodacao",
+      "alt": "Suíte Superior da pousada",
+      "prioridade": 4,
+      "ordem_galeria": 3,
+      "termos": [
+        "suite superior",
+        "suíte superior",
+        "superior"
+      ],
+      "gatilhos_automaticos": [
+        "suite superior",
+        "suíte superior"
+      ]
+    },
+    {
+      "id": "suite_premium",
+      "titulo": "Suíte Premium",
+      "arquivo": "assets/imagens/acomodacoes/suite_premium.png",
+      "categoria": "acomodacao",
+      "alt": "Suíte Premium da pousada",
+      "prioridade": 3,
+      "ordem_galeria": 4,
+      "termos": [
+        "suite premium",
+        "suíte premium",
+        "premium",
+        "hidromassagem"
+      ],
+      "gatilhos_automaticos": [
+        "suite premium",
+        "suíte premium",
+        "hidromassagem",
+        "viagem romantica",
+        "viagem romântica"
+      ]
+    },
+    {
+      "id": "suite_master_por_do_sol",
+      "titulo": "Suíte Master Pôr do Sol",
+      "arquivo": "assets/imagens/acomodacoes/suite_master_por_do_sol.png",
+      "categoria": "acomodacao",
+      "alt": "Suíte Master Pôr do Sol com vista panorâmica",
+      "prioridade": 1,
+      "ordem_galeria": 5,
+      "termos": [
+        "suite master",
+        "suíte master",
+        "suite master por do sol",
+        "suíte master pôr do sol",
+        "master por do sol",
+        "master pôr do sol",
+        "melhor suite",
+        "melhor suíte",
+        "lua de mel"
+      ],
+      "gatilhos_automaticos": [
+        "suite master",
+        "suíte master",
+        "lua de mel",
+        "acomodacao romantica",
+        "acomodação romântica",
+        "melhor suite para casal",
+        "melhor suíte para casal"
+      ]
+    },
+    {
+      "id": "chale_familia_luxo",
+      "titulo": "Chalé Família Luxo",
+      "arquivo": "assets/imagens/acomodacoes/chale_familia_luxo.png",
+      "categoria": "acomodacao",
+      "alt": "Chalé Família Luxo da pousada",
+      "prioridade": 2,
+      "ordem_galeria": 6,
+      "termos": [
+        "chale familia luxo",
+        "chalé família luxo",
+        "chale familia",
+        "chalé família",
+        "chale",
+        "chalé"
+      ],
+      "gatilhos_automaticos": [
+        "chale familia luxo",
+        "chalé família luxo",
+        "acomodacao para cinco pessoas",
+        "acomodação para cinco pessoas"
+      ]
+    },
+    {
+      "id": "piscina_aquecida",
+      "titulo": "Piscina Aquecida",
+      "arquivo": "assets/imagens/estrutura/piscina_aquecida.png",
+      "categoria": "estrutura",
+      "alt": "Piscina aquecida da Pousada Mirante do Pôr do Sol",
+      "prioridade": 1,
+      "termos": [
+        "piscina",
+        "piscina aquecida",
+        "area da piscina",
+        "área da piscina"
+      ],
+      "gatilhos_automaticos": [
+        "como e a piscina",
+        "como é a piscina",
+        "piscina aquecida"
+      ]
+    },
+    {
+      "id": "restaurante",
+      "titulo": "Restaurante Mirante",
+      "arquivo": "assets/imagens/estrutura/restaurante.png",
+      "categoria": "estrutura",
+      "alt": "Restaurante da Pousada Mirante do Pôr do Sol",
+      "prioridade": 1,
+      "termos": [
+        "restaurante",
+        "gastronomia",
+        "cafe da manha",
+        "café da manhã",
+        "salao do restaurante",
+        "salão do restaurante"
+      ],
+      "gatilhos_automaticos": [
+        "como e o restaurante",
+        "como é o restaurante"
+      ]
+    },
+    {
+      "id": "jardins_area_externa",
+      "titulo": "Jardins e Área Externa",
+      "arquivo": "assets/imagens/pousada/jardins_area_externa.png",
+      "categoria": "pousada",
+      "alt": "Jardins e área externa da Pousada Mirante do Pôr do Sol",
+      "prioridade": 2,
+      "ordem_galeria": 2,
+      "termos": [
+        "jardim",
+        "jardins",
+        "area externa",
+        "área externa",
+        "paisagismo",
+        "natureza"
+      ],
+      "gatilhos_automaticos": [
+        "como e a area externa",
+        "como é a área externa",
+        "jardins da pousada"
+      ]
+    }
+  ]
+}
