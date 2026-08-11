@@ -8,3 +8,5 @@ pypdf
 python-dotenv
 streamlit
 groq
+SQLAlchemy>=2.0,<3.0
+psycopg[binary]>=3.3,<4.0

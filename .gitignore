@@ -50,3 +50,8 @@ dist/
 # Arquivos pessoais
 *.bak
 *.backup
+
+# Banco local da Central de Reservas
+data/*.db
+data/*.sqlite
+data/*.sqlite3
