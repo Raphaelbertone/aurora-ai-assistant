@@ -14,6 +14,11 @@ from src.gallery import (
 )
 from src.rag import gerar_resposta
 
+from src.reservas.ui import (
+    exibir_central_reservas,
+    resetar_estado_central,
+)
+
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +27,7 @@ st.set_page_config(
     page_title="Agente Aurora | Pousada Mirante do Pôr do Sol",
     page_icon="🌄",
     layout="centered",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 
@@ -100,6 +105,37 @@ st.html(
         background: transparent !important;
     }
 
+
+    /* ==========================================================
+       CONTROLE DE ABERTURA DA SIDEBAR
+       ========================================================== */
+
+    [data-testid="collapsedControl"] {
+        visibility: visible !important;
+        opacity: 1 !important;
+        z-index: 999999 !important;
+    }
+
+    [data-testid="collapsedControl"] button {
+        border:
+            1px solid
+            rgba(41, 56, 46, 0.18) !important;
+        border-radius: 11px !important;
+        background:
+            rgba(255, 255, 255, 0.96) !important;
+        box-shadow:
+            0 4px 14px
+            rgba(41, 56, 46, 0.12) !important;
+    }
+
+    [data-testid="collapsedControl"] svg,
+    [data-testid="collapsedControl"] svg path {
+        color: #29382E !important;
+        fill: #29382E !important;
+        stroke: #29382E !important;
+    }
+
+
     #MainMenu {
         visibility: hidden;
     }
@@ -111,6 +147,11 @@ st.html(
     [data-testid="stDeployButton"] {
         display: none !important;
     }
+
+
+    /* ==========================================================
+       HERO PRINCIPAL
+       ========================================================== */
 
     .aurora-hero {
         position: relative;
@@ -287,6 +328,11 @@ st.html(
         line-height: 1.5;
     }
 
+
+    /* ==========================================================
+       HERO COM CONVERSA
+       ========================================================== */
+
     .aurora-hero-conversation {
         position: relative;
         display: flex;
@@ -381,6 +427,11 @@ st.html(
         text-align: right;
     }
 
+
+    /* ==========================================================
+       BOAS-VINDAS
+       ========================================================== */
+
     .aurora-welcome {
         width: 100%;
         margin-bottom: 0.7rem;
@@ -447,6 +498,11 @@ st.html(
         text-transform: uppercase;
     }
 
+
+    /* ==========================================================
+       BOTÕES
+       ========================================================== */
+
     .stButton > button {
         width: 100%;
         min-height: 2.4rem;
@@ -484,6 +540,11 @@ st.html(
     [data-testid="stHorizontalBlock"] {
         gap: 0.6rem;
     }
+
+
+    /* ==========================================================
+       CHAT
+       ========================================================== */
 
     [data-testid="stChatMessage"] {
         width: 100%;
@@ -524,6 +585,11 @@ st.html(
         margin-bottom: 0.16rem;
         font-size: 0.86rem;
     }
+
+
+    /* ==========================================================
+       BARRA DO CHAT
+       ========================================================== */
 
     .st-key-aurora-chat-bar,
     .st-key-aurora-chat-bar-inicial {
@@ -567,6 +633,11 @@ st.html(
         font-size: 0.84rem;
     }
 
+
+    /* ==========================================================
+       GALERIA
+       ========================================================== */
+
     [data-testid="stImage"] {
         overflow: hidden;
         border:
@@ -601,6 +672,11 @@ st.html(
         font-size: 0.69rem;
     }
 
+
+    /* ==========================================================
+       SIDEBAR
+       ========================================================== */
+
     [data-testid="stSidebar"] {
         background:
             linear-gradient(
@@ -633,14 +709,16 @@ st.html(
 
     [data-testid="stSidebar"]
     .stButton > button {
-        min-height: 2.3rem;
+        min-height: 2.05rem;
+        padding-top: 0.28rem;
+        padding-bottom: 0.28rem;
         border:
             1px solid
             rgba(255, 255, 255, 0.13);
         background:
             rgba(255, 255, 255, 0.065);
         color: #FFFFFF;
-        font-size: 0.74rem;
+        font-size: 0.70rem;
         box-shadow: none;
     }
 
@@ -661,12 +739,6 @@ st.html(
         Streamlit na sidebar e alinha a marca ao card principal.
         */
         margin-top: -4.25rem;
-    }
-
-    @media (max-width: 768px) {
-        .aurora-sidebar-brand {
-            margin-top: 0;
-        }
     }
 
     .aurora-sidebar-icon {
@@ -752,7 +824,46 @@ st.html(
         text-transform: uppercase;
     }
 
+
+    /* ==========================================================
+       MOBILE
+       ========================================================== */
+
     @media (max-width: 768px) {
+
+        .aurora-sidebar-brand {
+            margin-top: 0;
+        }
+
+        [data-testid="collapsedControl"] {
+            position: fixed !important;
+            top: 0.7rem !important;
+            left: 0.7rem !important;
+            z-index: 999999 !important;
+        }
+
+        [data-testid="collapsedControl"] button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            min-height: 42px !important;
+            padding: 0 !important;
+            border:
+                1px solid
+                rgba(241, 197, 141, 0.35) !important;
+            border-radius: 12px !important;
+            background: #29382E !important;
+            box-shadow:
+                0 5px 16px
+                rgba(41, 56, 46, 0.22) !important;
+        }
+
+        [data-testid="collapsedControl"] svg,
+        [data-testid="collapsedControl"] svg path {
+            color: #FFFFFF !important;
+            fill: #FFFFFF !important;
+            stroke: #FFFFFF !important;
+        }
 
         .block-container {
             padding-top: 0.58rem;
@@ -832,6 +943,10 @@ st.html(
 )
 
 
+# ============================================================
+# FORMATAÇÃO
+# ============================================================
+
 def preparar_markdown(
     texto: str,
 ) -> str:
@@ -858,6 +973,10 @@ def preparar_markdown(
     return texto.strip()
 
 
+# ============================================================
+# ESTADO
+# ============================================================
+
 def inicializar_estado() -> None:
     """
     Inicializa os dados persistidos
@@ -870,10 +989,14 @@ def inicializar_estado() -> None:
     if "pergunta_pendente" not in st.session_state:
         st.session_state.pergunta_pendente = None
 
+    if "area_ativa" not in st.session_state:
+        st.session_state.area_ativa = "chat"
+
 
 def limpar_conversa() -> None:
     """
-    Limpa histórico e pergunta pendente.
+    Limpa exclusivamente o histórico
+    do Assistente Virtual.
     """
 
     st.session_state.mensagens = []
@@ -890,6 +1013,50 @@ def definir_pergunta_sugerida(
     st.session_state.pergunta_pendente = pergunta
 
 
+def definir_area(
+    area: str,
+) -> None:
+    """
+    Alterna entre o Assistente Virtual
+    e a Central de Reservas.
+    """
+
+    st.session_state.area_ativa = area
+
+    if area == "reservas":
+        st.session_state.pergunta_pendente = None
+
+
+def abrir_central_reservas() -> None:
+    """
+    Abre a Central de Reservas.
+
+    Se o usuário já estiver na Central e clicar
+    novamente no acesso principal, inicia uma
+    nova operação.
+    """
+
+    ja_estava_na_central = (
+        st.session_state.area_ativa
+        == "reservas"
+    )
+
+    st.session_state.area_ativa = (
+        "reservas"
+    )
+
+    st.session_state.pergunta_pendente = (
+        None
+    )
+
+    if ja_estava_na_central:
+        resetar_estado_central()
+
+
+# ============================================================
+# GALERIA
+# ============================================================
+
 def exibir_imagens(
     imagens: list[dict],
 ) -> None:
@@ -903,11 +1070,13 @@ def exibir_imagens(
     imagens_validas = []
 
     for imagem in imagens:
+
         caminho = obter_caminho_imagem(
             imagem
         )
 
         if caminho.exists():
+
             imagens_validas.append(
                 (
                     imagem,
@@ -919,7 +1088,10 @@ def exibir_imagens(
         return
 
     if len(imagens_validas) == 1:
-        imagem, caminho = imagens_validas[0]
+
+        imagem, caminho = (
+            imagens_validas[0]
+        )
 
         st.html(
             """
@@ -939,6 +1111,7 @@ def exibir_imagens(
         )
 
     else:
+
         st.html(
             """
             <div class="aurora-gallery-title">
@@ -958,11 +1131,13 @@ def exibir_imagens(
         ) in enumerate(
             imagens_validas
         ):
+
             coluna = colunas[
                 indice % 2
             ]
 
             with coluna:
+
                 st.image(
                     caminho,
                     caption=imagem.get(
@@ -987,12 +1162,14 @@ def selecionar_imagens_seguras(
     """
 
     try:
+
         return selecionar_imagens(
             pergunta,
             limite=6,
         )
 
     except Exception:
+
         logger.exception(
             "Erro ao selecionar imagens da galeria."
         )
@@ -1009,12 +1186,14 @@ def gerar_resposta_visual(
     """
 
     if not imagens:
+
         return (
             "Não encontrei imagens relacionadas "
             "a essa solicitação."
         )
 
     if len(imagens) == 1:
+
         titulo = imagens[0].get(
             "titulo",
             "item solicitado",
@@ -1030,6 +1209,10 @@ def gerar_resposta_visual(
         "ilustrativas solicitadas."
     )
 
+
+# ============================================================
+# INTERAÇÕES SOCIAIS
+# ============================================================
 
 def responder_interacao_social(
     pergunta: str,
@@ -1081,6 +1264,7 @@ def responder_interacao_social(
     }
 
     if texto in agradecimentos:
+
         return (
             "Por nada! 😊 Foi um prazer ajudar. "
             "Se pintar outra dúvida sobre a pousada ou sobre "
@@ -1088,6 +1272,7 @@ def responder_interacao_social(
         )
 
     if texto in saudacoes:
+
         return (
             "Oi! 😊 Que bom ter você por aqui. "
             "Posso ajudar com acomodações, valores, experiências "
@@ -1096,6 +1281,7 @@ def responder_interacao_social(
         )
 
     if texto in despedidas:
+
         return (
             "Até mais! 😊 Foi um prazer ajudar. "
             "Espero que sua experiência em Campos do Jordão seja "
@@ -1104,6 +1290,10 @@ def responder_interacao_social(
 
     return None
 
+
+# ============================================================
+# HISTÓRICO
+# ============================================================
 
 def exibir_historico() -> None:
     """
@@ -1132,6 +1322,7 @@ def exibir_historico() -> None:
             )
 
             if role == "assistant":
+
                 exibir_imagens(
                     mensagem.get(
                         "imagens",
@@ -1148,7 +1339,9 @@ def rolar_para_ultima_mensagem() -> None:
     Em versões atuais do Streamlit, st.html pode executar
     JavaScript quando explicitamente autorizado. Para versões
     anteriores, usa o componente HTML como compatibilidade.
-    O script é estático e não recebe conteúdo do usuário ou da LLM.
+
+    O script é estático e não recebe conteúdo do usuário
+    ou da LLM.
     """
 
     if not st.session_state.mensagens:
@@ -1157,22 +1350,29 @@ def rolar_para_ultima_mensagem() -> None:
     script = """
     <script>
     (() => {
-        const rolar = () => {
-            const documento = (
-                window.parent && window.parent.document
-            ) ? window.parent.document : document;
 
-            const mensagens = documento.querySelectorAll(
-                '[data-testid="stChatMessage"]'
-            );
+        const rolar = () => {
+
+            const documento = (
+                window.parent &&
+                window.parent.document
+            )
+                ? window.parent.document
+                : document;
+
+            const mensagens =
+                documento.querySelectorAll(
+                    '[data-testid="stChatMessage"]'
+                );
 
             if (!mensagens.length) {
                 return;
             }
 
-            const ultimaMensagem = mensagens[
-                mensagens.length - 1
-            ];
+            const ultimaMensagem =
+                mensagens[
+                    mensagens.length - 1
+                ];
 
             ultimaMensagem.scrollIntoView({
                 behavior: 'smooth',
@@ -1180,8 +1380,16 @@ def rolar_para_ultima_mensagem() -> None:
             });
         };
 
-        window.setTimeout(rolar, 120);
-        window.setTimeout(rolar, 320);
+        window.setTimeout(
+            rolar,
+            120
+        );
+
+        window.setTimeout(
+            rolar,
+            320
+        );
+
     })();
     </script>
     """
@@ -1190,19 +1398,29 @@ def rolar_para_ultima_mensagem() -> None:
         st.html
     ).parameters
 
-    if "unsafe_allow_javascript" in parametros_html:
+    if (
+        "unsafe_allow_javascript"
+        in parametros_html
+    ):
+
         st.html(
             script,
             width="content",
             unsafe_allow_javascript=True,
         )
+
     else:
+
         components.html(
             script,
             height=0,
             scrolling=False,
         )
 
+
+# ============================================================
+# ATALHOS DA SIDEBAR
+# ============================================================
 
 def exibir_atalhos_sidebar() -> None:
     """
@@ -1279,6 +1497,10 @@ def exibir_atalhos_sidebar() -> None:
     )
 
 
+# ============================================================
+# INICIALIZAÇÃO
+# ============================================================
+
 inicializar_estado()
 
 tem_conversa = bool(
@@ -1286,7 +1508,15 @@ tem_conversa = bool(
 )
 
 
+# ============================================================
+# SIDEBAR
+# ============================================================
+
 with st.sidebar:
+
+    # ========================================================
+    # MARCA
+    # ========================================================
 
     st.html(
         """
@@ -1315,7 +1545,67 @@ with st.sidebar:
 
     st.divider()
 
-    if not tem_conversa:
+
+    # ========================================================
+    # NAVEGAÇÃO PRINCIPAL
+    # ========================================================
+
+    st.button(
+        "💬 Assistente virtual",
+        width="stretch",
+        key="abrir_assistente",
+        on_click=definir_area,
+        args=("chat",),
+    )
+
+    st.button(
+        "📅 Central de Reservas",
+        width="stretch",
+        key="abrir_central_reservas",
+        on_click=abrir_central_reservas,
+    )
+
+    st.divider()
+
+
+    # ========================================================
+    # CONTEÚDO DA SIDEBAR
+    # ========================================================
+
+    if (
+        st.session_state.area_ativa
+        == "reservas"
+    ):
+
+        st.html(
+            """
+            <div class="aurora-sidebar-box">
+
+                <div class="aurora-sidebar-box-title">
+                    Central demonstrativa
+                </div>
+
+                <div class="aurora-sidebar-item">
+                    🔎 Consultar disponibilidade
+                </div>
+
+                <div class="aurora-sidebar-item">
+                    ✅ Criar reserva fictícia
+                </div>
+
+                <div class="aurora-sidebar-item">
+                    📄 Consultar por código
+                </div>
+
+                <div class="aurora-sidebar-item">
+                    ❌ Simular cancelamento
+                </div>
+
+            </div>
+            """
+        )
+
+    elif not tem_conversa:
 
         st.html(
             """
@@ -1354,26 +1644,100 @@ with st.sidebar:
         )
 
     else:
+
         exibir_atalhos_sidebar()
+
+
+    # ========================================================
+    # AÇÃO SECUNDÁRIA DA ÁREA ATIVA
+    # ========================================================
+    #
+    # IMPORTANTE:
+    #
+    # Assistente Virtual:
+    #     + Nova conversa
+    #     → limpa somente o histórico do chat.
+    #
+    # Central de Reservas:
+    #     + Nova operação
+    #     → limpa somente o estado temporário da Central.
+    #
+    # Os dois fluxos são propositalmente separados.
+    # ========================================================
 
     st.divider()
 
-    st.button(
-        "＋ Nova conversa",
-        width="stretch",
-        key="nova_conversa",
-        on_click=limpar_conversa,
-    )
+    if (
+        st.session_state.area_ativa
+        == "chat"
+    ):
 
-    st.html(
-        """
-        <div class="aurora-sidebar-footnote">
-            As informações são fornecidas com base
-            no conteúdo oficial da pousada.
-        </div>
-        """
-    )
+        st.button(
+            "＋ Nova conversa",
+            key="botao_nova_conversa",
+            width="stretch",
+            on_click=limpar_conversa,
+        )
 
+    else:
+
+        st.button(
+            "＋ Nova operação",
+            key="botao_nova_operacao_central",
+            width="stretch",
+            on_click=resetar_estado_central,
+        )
+
+
+    # ========================================================
+    # RODAPÉ DA SIDEBAR
+    # ========================================================
+
+    if (
+        st.session_state.area_ativa
+        == "reservas"
+    ):
+
+        st.html(
+            """
+            <div class="aurora-sidebar-footnote">
+                Central fictícia desenvolvida para
+                demonstração acadêmica do projeto.
+                Não utilize dados pessoais reais.
+            </div>
+            """
+        )
+
+    else:
+
+        st.html(
+            """
+            <div class="aurora-sidebar-footnote">
+                As informações são fornecidas com base
+                no conteúdo oficial da pousada.
+            </div>
+            """
+        )
+
+
+# ============================================================
+# CENTRAL DE RESERVAS
+# ============================================================
+
+if (
+    st.session_state.area_ativa
+    == "reservas"
+):
+
+    exibir_central_reservas()
+
+    # Impede a renderização do chat abaixo da Central.
+    st.stop()
+
+
+# ============================================================
+# ASSISTENTE CONVERSACIONAL
+# ============================================================
 
 if not tem_conversa:
 
@@ -1474,6 +1838,10 @@ else:
     )
 
 
+# ============================================================
+# TELA INICIAL / HISTÓRICO
+# ============================================================
+
 if not tem_conversa:
 
     st.html(
@@ -1529,9 +1897,11 @@ if not tem_conversa:
         """
     )
 
-    coluna_1, coluna_2, coluna_3 = st.columns(
-        3,
-        gap="small",
+    coluna_1, coluna_2, coluna_3 = (
+        st.columns(
+            3,
+            gap="small",
+        )
     )
 
     with coluna_1:
@@ -1601,9 +1971,15 @@ if not tem_conversa:
         )
 
 else:
+
     exibir_historico()
+
     rolar_para_ultima_mensagem()
 
+
+# ============================================================
+# BARRA DO CHAT
+# ============================================================
 
 chave_barra_chat = (
     "aurora-chat-bar"
@@ -1614,18 +1990,26 @@ chave_barra_chat = (
 with st.container(
     key=chave_barra_chat,
 ):
+
     pergunta_digitada = st.chat_input(
         "Pergunte sobre sua estadia, a pousada ou Campos do Jordão...",
         key="entrada_chat",
     )
 
 
+# ============================================================
+# PERGUNTA PENDENTE / DIGITADA
+# ============================================================
+
 pergunta_sugerida = (
     st.session_state.pergunta_pendente
 )
 
 if pergunta_sugerida:
-    st.session_state.pergunta_pendente = None
+
+    st.session_state.pergunta_pendente = (
+        None
+    )
 
 
 pergunta = (
@@ -1633,6 +2017,10 @@ pergunta = (
     or pergunta_digitada
 )
 
+
+# ============================================================
+# PROCESSAMENTO DA PERGUNTA
+# ============================================================
 
 if pergunta:
 
@@ -1654,21 +2042,26 @@ if pergunta:
             )
         )
 
+
     resposta_social = (
         responder_interacao_social(
             pergunta
         )
     )
 
+
     if resposta_social:
+
         imagens = []
 
     else:
+
         imagens = (
             selecionar_imagens_seguras(
                 pergunta
             )
         )
+
 
     with st.chat_message(
         "assistant",
@@ -1681,7 +2074,10 @@ if pergunta:
 
             if resposta_social:
 
-                resposta = resposta_social
+                resposta = (
+                    resposta_social
+                )
+
                 fontes = []
 
             elif (
@@ -1705,17 +2101,23 @@ if pergunta:
                     "Consultando informações da pousada..."
                 ):
 
-                    resultado = gerar_resposta(
-                        pergunta
+                    resultado = (
+                        gerar_resposta(
+                            pergunta
+                        )
                     )
 
-                resposta = resultado[
-                    "resposta"
-                ]
+                resposta = (
+                    resultado[
+                        "resposta"
+                    ]
+                )
 
-                fontes = resultado.get(
-                    "fontes",
-                    [],
+                fontes = (
+                    resultado.get(
+                        "fontes",
+                        [],
+                    )
                 )
 
             tempo_resposta = (

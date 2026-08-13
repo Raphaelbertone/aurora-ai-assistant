@@ -1,8 +1,7 @@
 from __future__ import annotations
-
 from datetime import date
+from sqlalchemy import func, select
 
-from sqlalchemy import select
 from sqlalchemy.orm import (
     Session,
     selectinload,
@@ -258,6 +257,87 @@ def obter_reserva_por_codigo(
 
     return sessao.scalar(
         consulta
+    )
+
+
+def listar_reservas_por_dados_hospede(
+    sessao: Session,
+    nome_hospede: str | None = None,
+    email: str | None = None,
+    checkin: date | None = None,
+) -> list[Reserva]:
+    """
+    Localiza reservas utilizando somente
+    os critérios efetivamente informados.
+
+    Quando mais de um critério é fornecido,
+    todos devem coincidir.
+    """
+
+    filtros = []
+
+    if (
+        nome_hospede
+        and nome_hospede.strip()
+    ):
+
+        filtros.append(
+            func.lower(
+                func.trim(
+                    Reserva.nome_hospede
+                )
+            )
+            == nome_hospede.strip().lower()
+        )
+
+    if (
+        email
+        and email.strip()
+    ):
+
+        filtros.append(
+            func.lower(
+                func.trim(
+                    Reserva.email
+                )
+            )
+            == email.strip().lower()
+        )
+
+    if checkin is not None:
+
+        filtros.append(
+            Reserva.checkin
+            == checkin
+        )
+
+    if not filtros:
+
+        return []
+
+    consulta = (
+        select(
+            Reserva
+        )
+        .options(
+            selectinload(
+                Reserva.unidade
+            ).selectinload(
+                UnidadeAcomodacao.categoria
+            )
+        )
+        .where(
+            *filtros
+        )
+        .order_by(
+            Reserva.criada_em.desc()
+        )
+    )
+
+    return list(
+        sessao.scalars(
+            consulta
+        ).all()
     )
 
 

@@ -2,7 +2,10 @@ from decimal import Decimal
 
 from sqlalchemy import select
 
-from src.reservas.database import abrir_sessao
+from src.reservas.database import (
+    abrir_sessao,
+    motor_banco,
+)
 from src.reservas.models import (
     CategoriaAcomodacao,
     UnidadeAcomodacao,
@@ -10,96 +13,144 @@ from src.reservas.models import (
 
 
 # ============================================================
-# DADOS INICIAIS
+# UTILITÁRIOS
+# ============================================================
+
+def gerar_codigos(
+    prefixo: str,
+    quantidade: int,
+) -> list[str]:
+    """
+    Gera códigos sequenciais para as unidades.
+    """
+
+    return [
+        f"{prefixo}-{indice:02d}"
+        for indice in range(
+            1,
+            quantidade + 1,
+        )
+    ]
+
+
+# ============================================================
+# CATÁLOGO OFICIAL
 # ============================================================
 
 CATEGORIAS = [
     {
-        "nome": "Standard Casal",
+        "nome": "Quarto Standard Casal",
+        "aliases": (
+            "Standard Casal",
+        ),
         "capacidade": 2,
         "tarifa_referencia": Decimal("420.00"),
         "descricao": (
-            "Categoria Standard Casal. "
-            "Capacidade utilizada exclusivamente para "
-            "demonstração da Central de Reservas."
+            "Categoria oficial para até dois hóspedes."
         ),
-        "unidades": [
-            "STD-CASAL-01",
-            "STD-CASAL-02",
-            "STD-CASAL-03",
-        ],
+        "unidades": gerar_codigos(
+            "STD-CASAL",
+            8,
+        ),
     },
     {
-        "nome": "Standard Família",
+        "nome": "Quarto Standard Família",
+        "aliases": (
+            "Standard Família",
+        ),
         "capacidade": 4,
         "tarifa_referencia": Decimal("560.00"),
         "descricao": (
-            "Categoria Standard Família. "
-            "Capacidade utilizada exclusivamente para "
-            "demonstração da Central de Reservas."
+            "Categoria oficial para famílias "
+            "de até quatro hóspedes."
         ),
-        "unidades": [
-            "STD-FAM-01",
-            "STD-FAM-02",
-            "STD-FAM-03",
-        ],
+        "unidades": gerar_codigos(
+            "STD-FAM",
+            6,
+        ),
     },
     {
-        "nome": "Superior",
-        "capacidade": 3,
+        "nome": "Suíte Superior",
+        "aliases": (
+            "Superior",
+        ),
+        "capacidade": 2,
         "tarifa_referencia": Decimal("690.00"),
         "descricao": (
-            "Categoria Superior. "
-            "Capacidade utilizada exclusivamente para "
-            "demonstração da Central de Reservas."
+            "Categoria oficial com conforto ampliado "
+            "para até dois hóspedes."
         ),
-        "unidades": [
-            "SUP-01",
-            "SUP-02",
-        ],
+        "unidades": gerar_codigos(
+            "SUP",
+            6,
+        ),
     },
     {
-        "nome": "Premium",
+        "nome": "Suíte Premium",
+        "aliases": (
+            "Premium",
+        ),
         "capacidade": 2,
         "tarifa_referencia": Decimal("890.00"),
         "descricao": (
-            "Categoria Premium. "
-            "Capacidade utilizada exclusivamente para "
-            "demonstração da Central de Reservas."
+            "Categoria oficial premium "
+            "para até dois hóspedes."
         ),
-        "unidades": [
-            "PREM-01",
-            "PREM-02",
-        ],
+        "unidades": gerar_codigos(
+            "PREM",
+            4,
+        ),
     },
     {
-        "nome": "Master",
+        "nome": "Suíte Master Pôr do Sol",
+        "aliases": (
+            "Master",
+        ),
         "capacidade": 2,
         "tarifa_referencia": Decimal("1250.00"),
         "descricao": (
-            "Categoria Master. "
-            "Capacidade utilizada exclusivamente para "
-            "demonstração da Central de Reservas."
+            "Categoria oficial de experiência "
+            "premium para até dois hóspedes."
         ),
-        "unidades": [
-            "MASTER-01",
-        ],
+        "unidades": gerar_codigos(
+            "MASTER",
+            4,
+        ),
     },
     {
-        "nome": "Chalé",
-        "capacidade": 4,
+        "nome": "Chalé Família Luxo",
+        "aliases": (
+            "Chalé",
+        ),
+        "capacidade": 5,
         "tarifa_referencia": Decimal("1450.00"),
         "descricao": (
-            "Categoria Chalé. "
-            "Capacidade utilizada exclusivamente para "
-            "demonstração da Central de Reservas."
+            "Categoria oficial para famílias "
+            "e pequenos grupos de até cinco hóspedes."
         ),
-        "unidades": [
-            "CHALE-01",
-            "CHALE-02",
-        ],
+        "unidades": gerar_codigos(
+            "CHALE",
+            2,
+        ),
     },
 ]
+
+
+# ============================================================
+# VALIDAÇÃO
+# ============================================================
+
+def validar_postgresql() -> None:
+    """
+    Garante que o seed oficial seja aplicado
+    ao PostgreSQL da Central de Reservas.
+    """
+
+    if motor_banco.dialect.name != "postgresql":
+        raise RuntimeError(
+            "Seed cancelado. "
+            "A Central de Reservas exige PostgreSQL."
+        )
 
 
 # ============================================================
@@ -111,24 +162,48 @@ def obter_ou_criar_categoria(
     dados: dict,
 ) -> CategoriaAcomodacao:
     """
-    Obtém uma categoria existente pelo nome.
+    Localiza a categoria pelo nome oficial ou
+    por um nome utilizado anteriormente.
 
-    Caso não exista, cria uma nova.
-
-    Caso exista, sincroniza os dados principais
-    definidos pelo seed.
+    Dessa forma, o seed consegue atualizar
+    o banco existente sem duplicar categorias.
     """
 
-    categoria = sessao.scalar(
-        select(
-            CategoriaAcomodacao
-        ).where(
-            CategoriaAcomodacao.nome
-            == dados["nome"]
+    nomes_busca = [
+        dados["nome"],
+        *dados.get(
+            "aliases",
+            (),
+        ),
+    ]
+
+    encontradas = list(
+        sessao.scalars(
+            select(
+                CategoriaAcomodacao
+            ).where(
+                CategoriaAcomodacao.nome.in_(
+                    nomes_busca
+                )
+            )
+        ).all()
+    )
+
+    if len(encontradas) > 1:
+        raise RuntimeError(
+            "Foram encontradas categorias duplicadas "
+            f"para {dados['nome']}: "
+            f"{[c.nome for c in encontradas]}"
         )
+
+    categoria = (
+        encontradas[0]
+        if encontradas
+        else None
     )
 
     if categoria is None:
+
         categoria = CategoriaAcomodacao(
             nome=dados["nome"],
             capacidade=dados["capacidade"],
@@ -143,34 +218,37 @@ def obter_ou_criar_categoria(
             categoria
         )
 
-        # Garante que categoria.id esteja
-        # disponível antes da criação das unidades.
         sessao.flush()
 
         print(
-            f"[CRIADA] Categoria: "
-            f"{categoria.nome}"
+            f"[CRIADA] {categoria.nome}"
         )
 
     else:
-        categoria.capacidade = (
-            dados["capacidade"]
-        )
 
-        categoria.tarifa_referencia = (
-            dados["tarifa_referencia"]
-        )
+        nome_anterior = categoria.nome
 
-        categoria.descricao = (
-            dados["descricao"]
-        )
-
+        categoria.nome = dados["nome"]
+        categoria.capacidade = dados[
+            "capacidade"
+        ]
+        categoria.tarifa_referencia = dados[
+            "tarifa_referencia"
+        ]
+        categoria.descricao = dados[
+            "descricao"
+        ]
         categoria.ativa = True
 
-        print(
-            f"[OK] Categoria existente: "
-            f"{categoria.nome}"
-        )
+        if nome_anterior != categoria.nome:
+            print(
+                f"[ATUALIZADA] "
+                f"{nome_anterior} -> {categoria.nome}"
+            )
+        else:
+            print(
+                f"[OK] {categoria.nome}"
+            )
 
     return categoria
 
@@ -179,56 +257,82 @@ def obter_ou_criar_categoria(
 # UNIDADES
 # ============================================================
 
-def obter_ou_criar_unidade(
+def sincronizar_unidades(
     sessao,
     categoria: CategoriaAcomodacao,
-    codigo: str,
-) -> UnidadeAcomodacao:
+    codigos_esperados: list[str],
+) -> None:
     """
-    Obtém uma unidade existente pelo código
-    ou cria uma nova.
+    Sincroniza as unidades físicas da categoria.
 
-    O código único torna a operação idempotente.
+    Unidades esperadas são criadas ou ativadas.
+    Unidades extras são apenas desativadas,
+    nunca excluídas, preservando histórico.
     """
 
-    unidade = sessao.scalar(
-        select(
-            UnidadeAcomodacao
-        ).where(
-            UnidadeAcomodacao.codigo
-            == codigo
-        )
+    unidades_existentes = list(
+        sessao.scalars(
+            select(
+                UnidadeAcomodacao
+            ).where(
+                UnidadeAcomodacao.categoria_id
+                == categoria.id
+            )
+        ).all()
     )
 
-    if unidade is None:
-        unidade = UnidadeAcomodacao(
-            categoria_id=categoria.id,
-            codigo=codigo,
-            ativa=True,
+    por_codigo = {
+        unidade.codigo: unidade
+        for unidade in unidades_existentes
+    }
+
+    codigos_esperados_set = set(
+        codigos_esperados
+    )
+
+    for codigo in codigos_esperados:
+
+        unidade = por_codigo.get(
+            codigo
         )
 
-        sessao.add(
-            unidade
-        )
+        if unidade is None:
 
-        print(
-            f"    [CRIADA] Unidade: "
-            f"{codigo}"
-        )
+            unidade = UnidadeAcomodacao(
+                categoria_id=categoria.id,
+                codigo=codigo,
+                ativa=True,
+            )
 
-    else:
-        unidade.categoria_id = (
-            categoria.id
-        )
+            sessao.add(
+                unidade
+            )
 
-        unidade.ativa = True
+            print(
+                f"    [CRIADA] {codigo}"
+            )
 
-        print(
-            f"    [OK] Unidade existente: "
-            f"{codigo}"
-        )
+        else:
 
-    return unidade
+            unidade.categoria_id = categoria.id
+            unidade.ativa = True
+
+            print(
+                f"    [OK] {codigo}"
+            )
+
+    for unidade in unidades_existentes:
+
+        if (
+            unidade.codigo
+            not in codigos_esperados_set
+        ):
+            unidade.ativa = False
+
+            print(
+                f"    [INATIVADA] "
+                f"{unidade.codigo}"
+            )
 
 
 # ============================================================
@@ -237,15 +341,14 @@ def obter_ou_criar_unidade(
 
 def executar_seed() -> None:
     """
-    Popula o banco com categorias e unidades
-    demonstrativas da Central de Reservas.
-
-    A operação pode ser executada repetidamente
-    sem duplicar registros.
+    Sincroniza o catálogo relacional da Central
+    com as acomodações da Base Oficial.
     """
 
+    validar_postgresql()
+
     print(
-        "Iniciando seed da Central de Reservas..."
+        "Sincronizando catálogo oficial..."
     )
 
     print()
@@ -261,27 +364,19 @@ def executar_seed() -> None:
                 )
             )
 
-            for codigo in dados[
-                "unidades"
-            ]:
-
-                obter_ou_criar_unidade(
-                    sessao,
-                    categoria,
-                    codigo,
-                )
+            sincronizar_unidades(
+                sessao,
+                categoria,
+                dados["unidades"],
+            )
 
         sessao.commit()
 
     print()
     print(
-        "Seed concluído com sucesso."
+        "Catálogo sincronizado com sucesso."
     )
 
-
-# ============================================================
-# EXECUÇÃO
-# ============================================================
 
 if __name__ == "__main__":
     executar_seed()

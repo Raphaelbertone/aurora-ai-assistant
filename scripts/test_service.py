@@ -1,4 +1,5 @@
-from datetime import date
+from datetime import date, timedelta
+from decimal import Decimal
 
 from src.reservas.database import abrir_sessao
 from src.reservas.repository import obter_categoria_por_nome
@@ -10,15 +11,23 @@ from src.reservas.service import (
 )
 
 
-CHECKIN = date(2026, 8, 20)
-CHECKOUT = date(2026, 8, 23)
+# ============================================================
+# PERÍODO DE TESTE
+# ============================================================
 
+CHECKIN = date.today() + timedelta(days=30)
+CHECKOUT = CHECKIN + timedelta(days=3)
+
+
+# ============================================================
+# TESTE DA CAMADA DE SERVIÇO
+# ============================================================
 
 with abrir_sessao() as sessao:
 
     categoria = obter_categoria_por_nome(
         sessao,
-        "Standard Casal",
+        "Quarto Standard Casal",
     )
 
     assert categoria is not None
@@ -43,7 +52,7 @@ with abrir_sessao() as sessao:
         f"Disponíveis antes: {len(antes)}"
     )
 
-    assert len(antes) == 3
+    assert len(antes) == 8
 
     # --------------------------------------------------------
     # Criar reserva
@@ -68,20 +77,22 @@ with abrir_sessao() as sessao:
     )
 
     print(
-        f"Tarifa: R$ {reserva.tarifa_diaria_aplicada}"
+        f"Tarifa: R$ "
+        f"{reserva.tarifa_diaria_aplicada}"
     )
 
     print(
-        f"Total: R$ {reserva.valor_total_estimado}"
+        f"Total: R$ "
+        f"{reserva.valor_total_estimado}"
     )
 
     assert (
         reserva.valor_total_estimado
-        == 1260
+        == Decimal("1260.00")
     )
 
     # --------------------------------------------------------
-    # Durante o mesmo período
+    # Mesmo período
     # --------------------------------------------------------
 
     durante = consultar_disponibilidade(
@@ -93,33 +104,34 @@ with abrir_sessao() as sessao:
     )
 
     print(
-        f"Disponíveis após reserva: {len(durante)}"
+        f"Disponíveis após reserva: "
+        f"{len(durante)}"
     )
 
-    assert len(durante) == 2
+    assert len(durante) == 7
 
     # --------------------------------------------------------
-    # Checkout = próximo check-in
-    # Deve continuar permitido.
+    # Período adjacente
+    # Checkout anterior = novo check-in
     # --------------------------------------------------------
 
     adjacente = consultar_disponibilidade(
         sessao=sessao,
         checkin=CHECKOUT,
-        checkout=date(2026, 8, 25),
+        checkout=CHECKOUT + timedelta(days=2),
         quantidade_hospedes=2,
         categoria_id=categoria.id,
     )
 
     print(
-        f"Disponíveis em período adjacente: "
+        "Disponíveis em período adjacente: "
         f"{len(adjacente)}"
     )
 
-    assert len(adjacente) == 3
+    assert len(adjacente) == 8
 
     # --------------------------------------------------------
-    # Consulta
+    # Consulta da reserva
     # --------------------------------------------------------
 
     encontrada = consultar_reserva(
@@ -135,7 +147,7 @@ with abrir_sessao() as sessao:
     assert encontrada.status == "CONFIRMADA"
 
     print(
-        f"Status antes do cancelamento: "
+        "Status antes do cancelamento: "
         f"{encontrada.status}"
     )
 
@@ -156,7 +168,7 @@ with abrir_sessao() as sessao:
     assert cancelada.status == "CANCELADA"
 
     print(
-        f"Status após cancelamento: "
+        "Status após cancelamento: "
         f"{cancelada.status}"
     )
 
@@ -173,11 +185,11 @@ with abrir_sessao() as sessao:
     )
 
     print(
-        f"Disponíveis após cancelamento: "
+        "Disponíveis após cancelamento: "
         f"{len(depois)}"
     )
 
-    assert len(depois) == 3
+    assert len(depois) == 8
 
 
 print()

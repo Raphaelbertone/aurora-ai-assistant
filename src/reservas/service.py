@@ -7,13 +7,23 @@ from uuid import uuid4
 from sqlalchemy.orm import Session
 
 from src.reservas.models import Reserva, UnidadeAcomodacao
+
 from src.reservas.repository import (
     adicionar_reserva,
+    listar_reservas_por_dados_hospede,
     listar_unidades_disponiveis,
     obter_categoria_por_id,
     obter_reserva_por_codigo,
 )
 
+from src.reservas.schemas import (
+    DetalheReserva,
+    ResultadoDisponibilidade,
+    SolicitacaoDisponibilidade,
+    SolicitacaoRecuperacaoReserva,
+    SolicitacaoReserva,
+    UnidadeDisponivel,
+)
 
 # ============================================================
 # EXCEÇÕES
@@ -388,3 +398,256 @@ def cancelar_reserva(
     )
 
     return reserva
+
+# ============================================================
+# MAPEAMENTO PARA SCHEMAS
+# ============================================================
+
+def montar_unidade_disponivel(
+    unidade: UnidadeAcomodacao,
+    quantidade_diarias: int,
+) -> UnidadeDisponivel:
+    """
+    Converte uma unidade ORM para um objeto
+    seguro de apresentação.
+    """
+
+    tarifa = Decimal(
+        unidade.categoria.tarifa_referencia
+    )
+
+    return UnidadeDisponivel(
+        unidade_id=unidade.id,
+        codigo=unidade.codigo,
+        categoria_id=unidade.categoria.id,
+        categoria_nome=unidade.categoria.nome,
+        capacidade=unidade.categoria.capacidade,
+        tarifa_referencia=tarifa,
+        quantidade_diarias=quantidade_diarias,
+        valor_total_estimado=calcular_valor_total(
+            tarifa,
+            quantidade_diarias,
+        ),
+    )
+
+
+def montar_detalhe_reserva(
+    reserva: Reserva,
+) -> DetalheReserva:
+    """
+    Converte uma reserva ORM em um objeto
+    seguro para uso pela interface.
+    """
+
+    quantidade_diarias = (
+        reserva.checkout
+        - reserva.checkin
+    ).days
+
+    return DetalheReserva(
+        codigo_reserva=reserva.codigo_reserva,
+        status=reserva.status,
+        unidade_id=reserva.unidade.id,
+        unidade_codigo=reserva.unidade.codigo,
+        categoria_id=reserva.unidade.categoria.id,
+        categoria_nome=reserva.unidade.categoria.nome,
+        nome_hospede=reserva.nome_hospede,
+        email=reserva.email,
+        telefone=reserva.telefone,
+        checkin=reserva.checkin,
+        checkout=reserva.checkout,
+        quantidade_hospedes=reserva.quantidade_hospedes,
+        quantidade_diarias=quantidade_diarias,
+        tarifa_diaria_aplicada=Decimal(
+            reserva.tarifa_diaria_aplicada
+        ),
+        valor_total_estimado=Decimal(
+            reserva.valor_total_estimado
+        ),
+        observacoes=reserva.observacoes,
+        criada_em=reserva.criada_em,
+        cancelada_em=reserva.cancelada_em,
+    )
+
+
+# ============================================================
+# API DE ALTO NÍVEL
+# ============================================================
+
+def consultar_disponibilidade_detalhada(
+    sessao: Session,
+    solicitacao: SolicitacaoDisponibilidade,
+) -> ResultadoDisponibilidade:
+    """
+    Consulta disponibilidade e devolve um resultado
+    desacoplado dos modelos ORM.
+    """
+
+    unidades = consultar_disponibilidade(
+        sessao=sessao,
+        checkin=solicitacao.checkin,
+        checkout=solicitacao.checkout,
+        quantidade_hospedes=(
+            solicitacao.quantidade_hospedes
+        ),
+        categoria_id=solicitacao.categoria_id,
+    )
+
+    quantidade_diarias = (
+        calcular_quantidade_diarias(
+            solicitacao.checkin,
+            solicitacao.checkout,
+        )
+    )
+
+    unidades_convertidas = tuple(
+        montar_unidade_disponivel(
+            unidade,
+            quantidade_diarias,
+        )
+        for unidade in unidades
+    )
+
+    return ResultadoDisponibilidade(
+        checkin=solicitacao.checkin,
+        checkout=solicitacao.checkout,
+        quantidade_hospedes=(
+            solicitacao.quantidade_hospedes
+        ),
+        quantidade_diarias=quantidade_diarias,
+        unidades=unidades_convertidas,
+    )
+
+
+def criar_reserva_detalhada(
+    sessao: Session,
+    solicitacao: SolicitacaoReserva,
+) -> DetalheReserva:
+    """
+    Cria uma reserva utilizando o schema de entrada
+    e devolve um schema de saída.
+    """
+
+    reserva = criar_reserva(
+        sessao=sessao,
+        nome_hospede=solicitacao.nome_hospede,
+        email=solicitacao.email,
+        telefone=solicitacao.telefone,
+        checkin=solicitacao.checkin,
+        checkout=solicitacao.checkout,
+        quantidade_hospedes=(
+            solicitacao.quantidade_hospedes
+        ),
+        categoria_id=solicitacao.categoria_id,
+        observacoes=solicitacao.observacoes,
+    )
+
+    return montar_detalhe_reserva(
+        reserva
+    )
+
+
+def consultar_reserva_detalhada(
+    sessao: Session,
+    codigo_reserva: str,
+) -> DetalheReserva:
+    """
+    Consulta uma reserva e devolve
+    sua representação pública.
+    """
+
+    reserva = consultar_reserva(
+        sessao,
+        codigo_reserva,
+    )
+
+    return montar_detalhe_reserva(
+        reserva
+    )
+
+
+def cancelar_reserva_detalhada(
+    sessao: Session,
+    codigo_reserva: str,
+) -> DetalheReserva:
+    """
+    Cancela uma reserva e devolve
+    seu estado atualizado.
+    """
+
+    reserva = cancelar_reserva(
+        sessao,
+        codigo_reserva,
+    )
+
+    return montar_detalhe_reserva(
+        reserva
+    )
+
+
+def recuperar_reservas_detalhadas(
+    sessao: Session,
+    solicitacao: SolicitacaoRecuperacaoReserva,
+) -> tuple[DetalheReserva, ...]:
+    """
+    Localiza reservas usando um ou mais
+    critérios conhecidos pelo hóspede.
+    """
+
+    nome_hospede = (
+        solicitacao.nome_hospede.strip()
+        if (
+            solicitacao.nome_hospede
+            and solicitacao.nome_hospede.strip()
+        )
+        else None
+    )
+
+    email = (
+        solicitacao.email.strip()
+        if (
+            solicitacao.email
+            and solicitacao.email.strip()
+        )
+        else None
+    )
+
+    checkin = (
+        solicitacao.checkin
+    )
+
+    if not any(
+        (
+            nome_hospede,
+            email,
+            checkin,
+        )
+    ):
+
+        raise DadosReservaInvalidos(
+            "Informe pelo menos um dado "
+            "para localizar a reserva."
+        )
+
+    reservas = (
+        listar_reservas_por_dados_hospede(
+            sessao=sessao,
+            nome_hospede=nome_hospede,
+            email=email,
+            checkin=checkin,
+        )
+    )
+
+    if not reservas:
+
+        raise ReservaNaoEncontrada(
+            "Não encontramos reservas "
+            "com os dados informados."
+        )
+
+    return tuple(
+        montar_detalhe_reserva(
+            reserva
+        )
+        for reserva in reservas
+    )
