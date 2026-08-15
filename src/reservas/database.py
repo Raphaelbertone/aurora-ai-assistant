@@ -45,14 +45,43 @@ URL_SQLITE_PADRAO = (
 )
 
 
-URL_BANCO = (
-    os.getenv(
-        "DATABASE_URL",
-        "",
-    ).strip()
-    or URL_SQLITE_PADRAO
-)
+def normalizar_url_banco(
+    url: str,
+) -> str:
+    """
+    Normaliza URLs PostgreSQL fornecidas por
+    diferentes ambientes de hospedagem para
+    utilizar o driver psycopg 3.
+    """
 
+    if url.startswith(
+        "postgres://"
+    ):
+        return (
+            "postgresql+psycopg://"
+            + url[len("postgres://"):]
+        )
+
+    if url.startswith(
+        "postgresql://"
+    ):
+        return (
+            "postgresql+psycopg://"
+            + url[len("postgresql://"):]
+        )
+
+    return url
+
+
+URL_BANCO = normalizar_url_banco(
+    (
+        os.getenv(
+            "DATABASE_URL",
+            "",
+        ).strip()
+        or URL_SQLITE_PADRAO
+    )
+)
 
 # ============================================================
 # BASE DOS MODELOS

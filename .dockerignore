@@ -1,0 +1,53 @@
+# Git
+.git
+.gitignore
+
+# Ambiente Python local
+.venv
+venv
+env
+
+# Cache Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Variáveis privadas
+.env
+.env.*
+
+# Mantém explicitamente apenas o exemplo
+!.env.exemplo
+
+# Índice FAISS local
+data/faiss
+
+# Bancos locais
+*.db
+*.sqlite
+*.sqlite3
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+
+# IDE
+.vscode
+.idea
+
+# Testes/cache
+.pytest_cache
+.coverage
+htmlcov
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Logs e temporários
+*.log
+*.tmp
+*.temp
+
+# Artefatos locais
+screenshots
