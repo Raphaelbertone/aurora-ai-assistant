@@ -1779,6 +1779,35 @@ def contextualizar_pergunta_visual(
         )
     )
 
+    # Pedidos visuais genéricos por acomodações
+    # precisam chegar à Gallery como uma coleção.
+    # Categorias específicas continuam tendo
+    # prioridade por já estarem em assuntos_atuais.
+    if (
+        pedido_visual_atual
+        and not assuntos_atuais
+    ):
+        texto_visual = pergunta.casefold()
+
+        termos_acomodacoes_genericos = (
+            "quarto",
+            "quartos",
+            "acomodação",
+            "acomodações",
+            "acomodacao",
+            "acomodacoes",
+            "hospedagem",
+            "hospedagens",
+            "suítes",
+            "suites",
+        )
+
+        if any(
+            termo in texto_visual
+            for termo in termos_acomodacoes_genericos
+        ):
+            return "fotos das acomodações"
+
     # Pergunta já pede fotos e contém o assunto.
     if (
         pedido_visual_atual
