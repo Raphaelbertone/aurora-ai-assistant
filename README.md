@@ -128,6 +128,30 @@ Fragmentos gerados:     235
 
 Os documentos são carregados, fragmentados e posteriormente transformados em representações vetoriais.
 
+
+### 📘 Volume 5 — Documentação complementar
+
+O projeto também possui um quinto documento:
+
+```text
+docs/VOLUME 5.pdf
+```
+
+O **Volume 5** reúne documentação complementar relacionada ao desenvolvimento e à estrutura técnica do Agente Aurora.
+
+Diferentemente dos Volumes 1 a 4, o Volume 5 **não faz parte da Base Oficial de Conhecimento consultada pelo agente**. Por esse motivo, ele não é processado pelo pipeline de embeddings e não integra o índice vetorial FAISS.
+
+A separação dos documentos fica da seguinte forma:
+
+| Documento | Finalidade | Utilizado pelo RAG |
+|---|---|:---:|
+| Volume 1 | Base Oficial de Conhecimento | ✅ |
+| Volume 2 | Base Oficial de Conhecimento | ✅ |
+| Volume 3 | Base Oficial de Conhecimento | ✅ |
+| Volume 4 | Base Oficial de Conhecimento | ✅ |
+| Volume 5 | Documentação técnica e complementar | ❌ |
+
+Essa separação mantém o corpus utilizado para responder às perguntas do usuário restrito aos documentos definidos como Base Oficial de Conhecimento, enquanto o Volume 5 permanece disponível no repositório como documentação complementar do projeto.
 ---
 
 ## 🔎 Busca vetorial
@@ -923,6 +947,10 @@ aurora-ai-assistant/
 ├── docs/
 │   └── imagens/
 │       └── agente-aurora-producao.png
+│       └── app_aurora_tela1.png
+│       └── app_aurora_tela2.png
+│       └── app_aurora_tela3.png
+│       └── Volume 5.pdf
 │
 ├── documentos/
 │   ├── VOLUME 1.pdf
@@ -1475,11 +1503,12 @@ Dimensão: 1024
 ## FAISS
 
 ```text
-4 PDFs
-136 páginas
-235 fragmentos
-Índice persistido
-```
+PDFs existentes no projeto:       5
+PDFs utilizados pelo RAG:         4
+Páginas processadas pelo RAG:     136
+Chunks vetoriais:                 235
+
+> Embora o repositório possua cinco volumes de documentação, somente os **Volumes 1 a 4** compõem o corpus RAG. O Volume 5 possui finalidade documental/técnica e permanece fora do índice vetorial.
 
 ## Streamlit
 
