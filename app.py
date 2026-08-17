@@ -8,11 +8,15 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from src.gallery import (
-    e_pedido_apenas_visual,
     obter_caminho_imagem,
     selecionar_imagens,
 )
 from src.rag import gerar_resposta
+
+from src.reservas.ui import (
+    exibir_central_reservas,
+    resetar_estado_central,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -22,7 +26,7 @@ st.set_page_config(
     page_title="Agente Aurora | Pousada Mirante do Pôr do Sol",
     page_icon="🌄",
     layout="centered",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 
@@ -100,6 +104,37 @@ st.html(
         background: transparent !important;
     }
 
+
+    /* ==========================================================
+       CONTROLE DE ABERTURA DA SIDEBAR
+       ========================================================== */
+
+    [data-testid="collapsedControl"] {
+        visibility: visible !important;
+        opacity: 1 !important;
+        z-index: 999999 !important;
+    }
+
+    [data-testid="collapsedControl"] button {
+        border:
+            1px solid
+            rgba(41, 56, 46, 0.18) !important;
+        border-radius: 11px !important;
+        background:
+            rgba(255, 255, 255, 0.96) !important;
+        box-shadow:
+            0 4px 14px
+            rgba(41, 56, 46, 0.12) !important;
+    }
+
+    [data-testid="collapsedControl"] svg,
+    [data-testid="collapsedControl"] svg path {
+        color: #29382E !important;
+        fill: #29382E !important;
+        stroke: #29382E !important;
+    }
+
+
     #MainMenu {
         visibility: hidden;
     }
@@ -111,6 +146,11 @@ st.html(
     [data-testid="stDeployButton"] {
         display: none !important;
     }
+
+
+    /* ==========================================================
+       HERO PRINCIPAL
+       ========================================================== */
 
     .aurora-hero {
         position: relative;
@@ -287,6 +327,11 @@ st.html(
         line-height: 1.5;
     }
 
+
+    /* ==========================================================
+       HERO COM CONVERSA
+       ========================================================== */
+
     .aurora-hero-conversation {
         position: relative;
         display: flex;
@@ -381,6 +426,11 @@ st.html(
         text-align: right;
     }
 
+
+    /* ==========================================================
+       BOAS-VINDAS
+       ========================================================== */
+
     .aurora-welcome {
         width: 100%;
         margin-bottom: 0.7rem;
@@ -447,6 +497,11 @@ st.html(
         text-transform: uppercase;
     }
 
+
+    /* ==========================================================
+       BOTÕES
+       ========================================================== */
+
     .stButton > button {
         width: 100%;
         min-height: 2.4rem;
@@ -484,6 +539,11 @@ st.html(
     [data-testid="stHorizontalBlock"] {
         gap: 0.6rem;
     }
+
+
+    /* ==========================================================
+       CHAT
+       ========================================================== */
 
     [data-testid="stChatMessage"] {
         width: 100%;
@@ -524,6 +584,11 @@ st.html(
         margin-bottom: 0.16rem;
         font-size: 0.86rem;
     }
+
+
+    /* ==========================================================
+       BARRA DO CHAT
+       ========================================================== */
 
     .st-key-aurora-chat-bar,
     .st-key-aurora-chat-bar-inicial {
@@ -567,6 +632,11 @@ st.html(
         font-size: 0.84rem;
     }
 
+
+    /* ==========================================================
+       GALERIA
+       ========================================================== */
+
     [data-testid="stImage"] {
         overflow: hidden;
         border:
@@ -601,6 +671,11 @@ st.html(
         font-size: 0.69rem;
     }
 
+
+    /* ==========================================================
+       SIDEBAR
+       ========================================================== */
+
     [data-testid="stSidebar"] {
         background:
             linear-gradient(
@@ -633,14 +708,16 @@ st.html(
 
     [data-testid="stSidebar"]
     .stButton > button {
-        min-height: 2.3rem;
+        min-height: 2.05rem;
+        padding-top: 0.28rem;
+        padding-bottom: 0.28rem;
         border:
             1px solid
             rgba(255, 255, 255, 0.13);
         background:
             rgba(255, 255, 255, 0.065);
         color: #FFFFFF;
-        font-size: 0.74rem;
+        font-size: 0.70rem;
         box-shadow: none;
     }
 
@@ -661,12 +738,6 @@ st.html(
         Streamlit na sidebar e alinha a marca ao card principal.
         */
         margin-top: -4.25rem;
-    }
-
-    @media (max-width: 768px) {
-        .aurora-sidebar-brand {
-            margin-top: 0;
-        }
     }
 
     .aurora-sidebar-icon {
@@ -752,7 +823,46 @@ st.html(
         text-transform: uppercase;
     }
 
+
+    /* ==========================================================
+       MOBILE
+       ========================================================== */
+
     @media (max-width: 768px) {
+
+        .aurora-sidebar-brand {
+            margin-top: 0;
+        }
+
+        [data-testid="collapsedControl"] {
+            position: fixed !important;
+            top: 0.7rem !important;
+            left: 0.7rem !important;
+            z-index: 999999 !important;
+        }
+
+        [data-testid="collapsedControl"] button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            min-height: 42px !important;
+            padding: 0 !important;
+            border:
+                1px solid
+                rgba(241, 197, 141, 0.35) !important;
+            border-radius: 12px !important;
+            background: #29382E !important;
+            box-shadow:
+                0 5px 16px
+                rgba(41, 56, 46, 0.22) !important;
+        }
+
+        [data-testid="collapsedControl"] svg,
+        [data-testid="collapsedControl"] svg path {
+            color: #FFFFFF !important;
+            fill: #FFFFFF !important;
+            stroke: #FFFFFF !important;
+        }
 
         .block-container {
             padding-top: 0.58rem;
@@ -832,6 +942,10 @@ st.html(
 )
 
 
+# ============================================================
+# FORMATAÇÃO
+# ============================================================
+
 def preparar_markdown(
     texto: str,
 ) -> str:
@@ -858,6 +972,10 @@ def preparar_markdown(
     return texto.strip()
 
 
+# ============================================================
+# ESTADO
+# ============================================================
+
 def inicializar_estado() -> None:
     """
     Inicializa os dados persistidos
@@ -870,10 +988,14 @@ def inicializar_estado() -> None:
     if "pergunta_pendente" not in st.session_state:
         st.session_state.pergunta_pendente = None
 
+    if "area_ativa" not in st.session_state:
+        st.session_state.area_ativa = "chat"
+
 
 def limpar_conversa() -> None:
     """
-    Limpa histórico e pergunta pendente.
+    Limpa exclusivamente o histórico
+    do Assistente Virtual.
     """
 
     st.session_state.mensagens = []
@@ -890,6 +1012,50 @@ def definir_pergunta_sugerida(
     st.session_state.pergunta_pendente = pergunta
 
 
+def definir_area(
+    area: str,
+) -> None:
+    """
+    Alterna entre o Assistente Virtual
+    e a Central de Reservas.
+    """
+
+    st.session_state.area_ativa = area
+
+    if area == "reservas":
+        st.session_state.pergunta_pendente = None
+
+
+def abrir_central_reservas() -> None:
+    """
+    Abre a Central de Reservas.
+
+    Se o usuário já estiver na Central e clicar
+    novamente no acesso principal, inicia uma
+    nova operação.
+    """
+
+    ja_estava_na_central = (
+        st.session_state.area_ativa
+        == "reservas"
+    )
+
+    st.session_state.area_ativa = (
+        "reservas"
+    )
+
+    st.session_state.pergunta_pendente = (
+        None
+    )
+
+    if ja_estava_na_central:
+        resetar_estado_central()
+
+
+# ============================================================
+# GALERIA
+# ============================================================
+
 def exibir_imagens(
     imagens: list[dict],
 ) -> None:
@@ -903,11 +1069,13 @@ def exibir_imagens(
     imagens_validas = []
 
     for imagem in imagens:
+
         caminho = obter_caminho_imagem(
             imagem
         )
 
         if caminho.exists():
+
             imagens_validas.append(
                 (
                     imagem,
@@ -919,7 +1087,10 @@ def exibir_imagens(
         return
 
     if len(imagens_validas) == 1:
-        imagem, caminho = imagens_validas[0]
+
+        imagem, caminho = (
+            imagens_validas[0]
+        )
 
         st.html(
             """
@@ -939,6 +1110,7 @@ def exibir_imagens(
         )
 
     else:
+
         st.html(
             """
             <div class="aurora-gallery-title">
@@ -958,11 +1130,13 @@ def exibir_imagens(
         ) in enumerate(
             imagens_validas
         ):
+
             coluna = colunas[
                 indice % 2
             ]
 
             with coluna:
+
                 st.image(
                     caminho,
                     caption=imagem.get(
@@ -987,12 +1161,14 @@ def selecionar_imagens_seguras(
     """
 
     try:
+
         return selecionar_imagens(
             pergunta,
             limite=6,
         )
 
     except Exception:
+
         logger.exception(
             "Erro ao selecionar imagens da galeria."
         )
@@ -1009,12 +1185,14 @@ def gerar_resposta_visual(
     """
 
     if not imagens:
+
         return (
             "Não encontrei imagens relacionadas "
             "a essa solicitação."
         )
 
     if len(imagens) == 1:
+
         titulo = imagens[0].get(
             "titulo",
             "item solicitado",
@@ -1030,6 +1208,10 @@ def gerar_resposta_visual(
         "ilustrativas solicitadas."
     )
 
+
+# ============================================================
+# INTERAÇÕES SOCIAIS
+# ============================================================
 
 def responder_interacao_social(
     pergunta: str,
@@ -1081,6 +1263,7 @@ def responder_interacao_social(
     }
 
     if texto in agradecimentos:
+
         return (
             "Por nada! 😊 Foi um prazer ajudar. "
             "Se pintar outra dúvida sobre a pousada ou sobre "
@@ -1088,6 +1271,7 @@ def responder_interacao_social(
         )
 
     if texto in saudacoes:
+
         return (
             "Oi! 😊 Que bom ter você por aqui. "
             "Posso ajudar com acomodações, valores, experiências "
@@ -1096,6 +1280,7 @@ def responder_interacao_social(
         )
 
     if texto in despedidas:
+
         return (
             "Até mais! 😊 Foi um prazer ajudar. "
             "Espero que sua experiência em Campos do Jordão seja "
@@ -1104,6 +1289,607 @@ def responder_interacao_social(
 
     return None
 
+def responder_intencao_central_reservas(
+    pergunta: str,
+) -> str | None:
+    """
+    Responde localmente perguntas sobre como utilizar
+    a Central de Reservas demonstrativa.
+
+    Essas respostas representam capacidades da própria
+    aplicação e não dependem do RAG.
+    """
+
+    texto = (
+        pergunta
+        .casefold()
+        .strip()
+    )
+
+    texto = re.sub(
+        r"[!?.,;:]+",
+        " ",
+        texto,
+    )
+
+    texto = re.sub(
+        r"\s+",
+        " ",
+        texto,
+    ).strip()
+
+
+    # --------------------------------------------------------
+    # COMO / ONDE RESERVAR
+    # --------------------------------------------------------
+
+    termos_acesso = (
+        "onde posso reservar",
+        "onde faço a reserva",
+        "onde faco a reserva",
+        "como faço a reserva",
+        "como faco a reserva",
+        "como posso reservar",
+        "como reservar",
+        "onde reservar",
+        "como acesso a central",
+        "como acessar a central",
+        "onde fica a central",
+        "central de reservas",
+    )
+
+    if any(
+        termo in texto
+        for termo in termos_acesso
+    ):
+
+        return (
+            "Você pode usar a **Central de Reservas** "
+            "do próprio Agente Aurora. 📅\n\n"
+            "Ela está disponível no menu lateral e permite "
+            "consultar disponibilidade demonstrativa, criar "
+            "uma reserva fictícia, consultar uma reserva e "
+            "simular o cancelamento.\n\n"
+            "**Importante:** esta Central faz parte da "
+            "demonstração acadêmica e não corresponde ao "
+            "sistema real de reservas de uma pousada."
+        )
+
+
+    # --------------------------------------------------------
+    # POSSO RESERVAR?
+    # --------------------------------------------------------
+
+    termos_reservar = (
+        "posso reservar",
+        "quero reservar",
+        "gostaria de reservar",
+        "consigo reservar",
+        "fazer uma reserva",
+        "criar uma reserva",
+    )
+
+    if any(
+        termo in texto
+        for termo in termos_reservar
+    ):
+
+        return (
+            "Sim. 😊 No Agente Aurora você pode utilizar a "
+            "**Central de Reservas demonstrativa** para "
+            "consultar disponibilidade e criar uma "
+            "reserva fictícia.\n\n"
+            "Acesse **📅 Central de Reservas** no menu lateral "
+            "e comece pela consulta de disponibilidade.\n\n"
+            "As operações são exclusivamente demonstrativas "
+            "e não representam reservas reais."
+        )
+
+
+    # --------------------------------------------------------
+    # DISPONIBILIDADE PARA UMA DATA
+    # --------------------------------------------------------
+
+    termos_disponibilidade = (
+        "tem vaga",
+        "tem disponibilidade",
+        "há disponibilidade",
+        "ha disponibilidade",
+        "disponível para",
+        "disponivel para",
+        "quarto para amanhã",
+        "quarto para amanha",
+        "reserva para amanhã",
+        "reserva para amanha",
+    )
+
+    if any(
+        termo in texto
+        for termo in termos_disponibilidade
+    ):
+
+        return (
+            "Você pode verificar essa data diretamente na "
+            "**Central de Reservas demonstrativa**. 📅\n\n"
+            "Abra **Central de Reservas → Disponibilidade**, "
+            "informe check-in, check-out e quantidade de "
+            "hóspedes. A consulta usa o inventário fictício "
+            "armazenado no banco PostgreSQL do projeto.\n\n"
+            "Essa disponibilidade pertence somente à "
+            "demonstração acadêmica e não representa a "
+            "disponibilidade real de uma pousada."
+        )
+
+
+    return None
+
+
+def obter_perguntas_anteriores(
+    limite: int = 2,
+) -> list[str]:
+    """
+    Retorna as últimas perguntas do usuário
+    anteriores à pergunta atualmente processada.
+    """
+
+    perguntas = [
+        mensagem["content"]
+        for mensagem
+        in st.session_state.mensagens[:-1]
+        if mensagem.get("role") == "user"
+    ]
+
+    return perguntas[-limite:]
+
+
+def e_pergunta_dependente_de_contexto(
+    pergunta: str,
+) -> bool:
+    """
+    Detecta perguntas curtas ou elípticas que
+    provavelmente dependem da conversa anterior.
+    """
+
+    texto = pergunta.casefold().strip()
+
+    texto_limpo = re.sub(
+        r"[!?.,;:]+",
+        "",
+        texto,
+    ).strip()
+
+    palavras = texto_limpo.split()
+
+    inicios_contextuais = (
+        "e ",
+        "e do ",
+        "e da ",
+        "e dos ",
+        "e das ",
+        "e o ",
+        "e a ",
+        "e os ",
+        "e as ",
+        "também",
+        "tambem",
+        "e também",
+        "e tambem",
+        "sobre isso",
+        "nesse caso",
+        "nesse lugar",
+        "nessa opção",
+        "nessa opcao",
+    )
+
+    perguntas_genericas_contextuais = {
+        "tem fotos",
+        "tem foto",
+        "possui fotos",
+        "possui foto",
+        "e fotos",
+        "e as fotos",
+        "quais",
+        "qual",
+        "como assim",
+        "por que",
+        "porque",
+        "e quanto custa",
+        "quanto custa",
+        "e o valor",
+        "qual o valor",
+        "e lá",
+        "e la",
+        "e ali",
+    }
+
+    if texto_limpo in perguntas_genericas_contextuais:
+        return True
+
+    if texto.startswith(
+        inicios_contextuais
+    ):
+        return True
+
+    referencias = {
+        "isso",
+        "essa",
+        "esse",
+        "essas",
+        "esses",
+        "ela",
+        "ele",
+        "elas",
+        "eles",
+        "lá",
+        "la",
+        "ali",
+    }
+
+    if (
+        len(palavras) <= 6
+        and any(
+            palavra in referencias
+            for palavra in palavras
+        )
+    ):
+        return True
+
+    return False
+
+
+def contextualizar_pergunta(
+    pergunta: str,
+) -> str:
+    """
+    Acrescenta contexto recente somente quando
+    a pergunta atual depende claramente de uma
+    interação anterior.
+    """
+
+    if not e_pergunta_dependente_de_contexto(
+        pergunta
+    ):
+        return pergunta
+
+    anteriores = obter_perguntas_anteriores(
+        limite=2
+    )
+
+    if not anteriores:
+        return pergunta
+
+    contexto = " | ".join(
+        anteriores
+    )
+
+    return (
+        f"Contexto recente do usuário: {contexto}. "
+        f"Pergunta atual: {pergunta}"
+    )
+
+
+# ============================================================
+# CONTEXTO VISUAL
+# ============================================================
+
+def obter_ultima_pergunta_usuario(
+    ignorar_atual: bool = True,
+) -> str | None:
+    """
+    Obtém a pergunta anterior mais recente
+    feita pelo usuário.
+    """
+
+    mensagens = (
+        st.session_state.mensagens[:-1]
+        if ignorar_atual
+        else st.session_state.mensagens
+    )
+
+    for mensagem in reversed(
+        mensagens
+    ):
+
+        if (
+            mensagem.get("role")
+            == "user"
+        ):
+
+            return mensagem.get(
+                "content"
+            )
+
+    return None
+
+
+def extrair_assuntos_visuais(
+    texto: str,
+) -> list[str]:
+    """
+    Identifica assuntos que possuem representação
+    visual na galeria demonstrativa.
+    """
+
+    texto_normalizado = (
+        texto.casefold()
+    )
+
+    assuntos = []
+
+    termos = (
+        (
+            "restaurante",
+            (
+                "restaurante",
+                "gastronomia",
+            ),
+        ),
+        (
+            "piscina",
+            (
+                "piscina",
+            ),
+        ),
+        (
+            "deck",
+            (
+                "deck",
+                "pôr do sol",
+                "por do sol",
+            ),
+        ),
+        (
+            "jardins",
+            (
+                "jardim",
+                "jardins",
+                "área externa",
+                "area externa",
+            ),
+        ),
+        (
+            "Quarto Standard Casal",
+            (
+                "quarto standard casal",
+                "standard casal",
+            ),
+        ),
+        (
+            "Quarto Standard Família",
+            (
+                "quarto standard família",
+                "quarto standard familia",
+                "standard família",
+                "standard familia",
+            ),
+        ),
+        (
+            "Suíte Superior",
+            (
+                "suíte superior",
+                "suite superior",
+            ),
+        ),
+        (
+            "Suíte Premium",
+            (
+                "suíte premium",
+                "suite premium",
+            ),
+        ),
+        (
+            "Suíte Master Pôr do Sol",
+            (
+                "suíte master",
+                "suite master",
+                "master pôr do sol",
+                "master por do sol",
+            ),
+        ),
+        (
+            "Chalé Família Luxo",
+            (
+                "chalé família luxo",
+                "chale familia luxo",
+                "chalé",
+                "chale",
+            ),
+        ),
+        (
+            "pousada",
+            (
+                "pousada",
+                "hotel",
+                "fachada",
+            ),
+        ),
+    )
+
+    for assunto, palavras_chave in termos:
+
+        if any(
+            palavra in texto_normalizado
+            for palavra in palavras_chave
+        ):
+
+            assuntos.append(
+                assunto
+            )
+
+    assuntos_especificos = [
+        assunto
+        for assunto in assuntos
+        if assunto != "pousada"
+    ]
+
+    if assuntos_especificos:
+        return assuntos_especificos
+
+    return assuntos
+
+
+def e_pedido_visual_explicito(
+    pergunta: str,
+) -> bool:
+    """
+    Detecta referência explícita a foto,
+    imagem ou galeria.
+    """
+
+    texto = pergunta.casefold()
+
+    termos_visuais = (
+        "foto",
+        "fotos",
+        "imagem",
+        "imagens",
+        "galeria",
+        "mostrar",
+        "ver fotos",
+        "ver imagem",
+    )
+
+    return any(
+        termo in texto
+        for termo in termos_visuais
+    )
+
+
+def contextualizar_pergunta_visual(
+    pergunta: str,
+) -> str | None:
+    """
+    Constrói uma consulta específica
+    para a Gallery.
+    """
+
+    pergunta_anterior = (
+        obter_ultima_pergunta_usuario()
+    )
+
+    assuntos_atuais = (
+        extrair_assuntos_visuais(
+            pergunta
+        )
+    )
+
+    pedido_visual_atual = (
+        e_pedido_visual_explicito(
+            pergunta
+        )
+    )
+
+    # Pedidos visuais genéricos por acomodações
+    # precisam chegar à Gallery como uma coleção.
+    # Categorias específicas continuam tendo
+    # prioridade por já estarem em assuntos_atuais.
+    if (
+        pedido_visual_atual
+        and not assuntos_atuais
+    ):
+        texto_visual = pergunta.casefold()
+
+        termos_acomodacoes_genericos = (
+            "quarto",
+            "quartos",
+            "acomodação",
+            "acomodações",
+            "acomodacao",
+            "acomodacoes",
+            "hospedagem",
+            "hospedagens",
+            "suítes",
+            "suites",
+        )
+
+        if any(
+            termo in texto_visual
+            for termo in termos_acomodacoes_genericos
+        ):
+            return "fotos das acomodações"
+
+    # Pergunta já pede fotos e contém o assunto.
+    if (
+        pedido_visual_atual
+        and assuntos_atuais
+    ):
+
+        # Pedido genérico por fotos da pousada:
+        # interpreta como uma visão geral das
+        # principais áreas da propriedade.
+        if assuntos_atuais == ["pousada"]:
+
+            return (
+                "fotos da pousada, "
+                "deck do pôr do sol, "
+                "jardins e área externa, "
+                "piscina e restaurante"
+            )
+
+        return (
+            "fotos de "
+            + " e ".join(
+                assuntos_atuais
+            )
+        )
+
+    # Ex.: "tem fotos?"
+    # Herda o assunto da pergunta anterior.
+    if (
+        pedido_visual_atual
+        and not assuntos_atuais
+        and pergunta_anterior
+    ):
+
+        assuntos_anteriores = (
+            extrair_assuntos_visuais(
+                pergunta_anterior
+            )
+        )
+
+        if assuntos_anteriores:
+
+            return (
+                "fotos de "
+                + " e ".join(
+                    assuntos_anteriores
+                )
+            )
+
+    # Ex.: "e do restaurante e piscina?"
+    # Herda a intenção visual da pergunta anterior.
+    texto = pergunta.casefold().strip()
+
+    continuacao = (
+        texto.startswith("e ")
+        or texto.startswith("e do ")
+        or texto.startswith("e da ")
+        or texto.startswith("e dos ")
+        or texto.startswith("e das ")
+    )
+
+    if (
+        continuacao
+        and assuntos_atuais
+        and pergunta_anterior
+        and e_pedido_visual_explicito(
+            pergunta_anterior
+        )
+    ):
+
+        return (
+            "fotos de "
+            + " e ".join(
+                assuntos_atuais
+            )
+        )
+
+    return None
+
+
+# ============================================================
+# HISTÓRICO
+# ============================================================
 
 def exibir_historico() -> None:
     """
@@ -1132,6 +1918,7 @@ def exibir_historico() -> None:
             )
 
             if role == "assistant":
+
                 exibir_imagens(
                     mensagem.get(
                         "imagens",
@@ -1148,7 +1935,9 @@ def rolar_para_ultima_mensagem() -> None:
     Em versões atuais do Streamlit, st.html pode executar
     JavaScript quando explicitamente autorizado. Para versões
     anteriores, usa o componente HTML como compatibilidade.
-    O script é estático e não recebe conteúdo do usuário ou da LLM.
+
+    O script é estático e não recebe conteúdo do usuário
+    ou da LLM.
     """
 
     if not st.session_state.mensagens:
@@ -1157,22 +1946,29 @@ def rolar_para_ultima_mensagem() -> None:
     script = """
     <script>
     (() => {
-        const rolar = () => {
-            const documento = (
-                window.parent && window.parent.document
-            ) ? window.parent.document : document;
 
-            const mensagens = documento.querySelectorAll(
-                '[data-testid="stChatMessage"]'
-            );
+        const rolar = () => {
+
+            const documento = (
+                window.parent &&
+                window.parent.document
+            )
+                ? window.parent.document
+                : document;
+
+            const mensagens =
+                documento.querySelectorAll(
+                    '[data-testid="stChatMessage"]'
+                );
 
             if (!mensagens.length) {
                 return;
             }
 
-            const ultimaMensagem = mensagens[
-                mensagens.length - 1
-            ];
+            const ultimaMensagem =
+                mensagens[
+                    mensagens.length - 1
+                ];
 
             ultimaMensagem.scrollIntoView({
                 behavior: 'smooth',
@@ -1180,8 +1976,16 @@ def rolar_para_ultima_mensagem() -> None:
             });
         };
 
-        window.setTimeout(rolar, 120);
-        window.setTimeout(rolar, 320);
+        window.setTimeout(
+            rolar,
+            120
+        );
+
+        window.setTimeout(
+            rolar,
+            320
+        );
+
     })();
     </script>
     """
@@ -1190,19 +1994,29 @@ def rolar_para_ultima_mensagem() -> None:
         st.html
     ).parameters
 
-    if "unsafe_allow_javascript" in parametros_html:
+    if (
+        "unsafe_allow_javascript"
+        in parametros_html
+    ):
+
         st.html(
             script,
             width="content",
             unsafe_allow_javascript=True,
         )
+
     else:
+
         components.html(
             script,
             height=0,
             scrolling=False,
         )
 
+
+# ============================================================
+# ATALHOS DA SIDEBAR
+# ============================================================
 
 def exibir_atalhos_sidebar() -> None:
     """
@@ -1279,6 +2093,10 @@ def exibir_atalhos_sidebar() -> None:
     )
 
 
+# ============================================================
+# INICIALIZAÇÃO
+# ============================================================
+
 inicializar_estado()
 
 tem_conversa = bool(
@@ -1286,7 +2104,15 @@ tem_conversa = bool(
 )
 
 
+# ============================================================
+# SIDEBAR
+# ============================================================
+
 with st.sidebar:
+
+    # ========================================================
+    # MARCA
+    # ========================================================
 
     st.html(
         """
@@ -1315,7 +2141,67 @@ with st.sidebar:
 
     st.divider()
 
-    if not tem_conversa:
+
+    # ========================================================
+    # NAVEGAÇÃO PRINCIPAL
+    # ========================================================
+
+    st.button(
+        "💬 Assistente virtual",
+        width="stretch",
+        key="abrir_assistente",
+        on_click=definir_area,
+        args=("chat",),
+    )
+
+    st.button(
+        "📅 Central de Reservas",
+        width="stretch",
+        key="abrir_central_reservas",
+        on_click=abrir_central_reservas,
+    )
+
+    st.divider()
+
+
+    # ========================================================
+    # CONTEÚDO DA SIDEBAR
+    # ========================================================
+
+    if (
+        st.session_state.area_ativa
+        == "reservas"
+    ):
+
+        st.html(
+            """
+            <div class="aurora-sidebar-box">
+
+                <div class="aurora-sidebar-box-title">
+                    Central demonstrativa
+                </div>
+
+                <div class="aurora-sidebar-item">
+                    🔎 Consultar disponibilidade
+                </div>
+
+                <div class="aurora-sidebar-item">
+                    ✅ Criar reserva fictícia
+                </div>
+
+                <div class="aurora-sidebar-item">
+                    📄 Consultar por código
+                </div>
+
+                <div class="aurora-sidebar-item">
+                    ❌ Simular cancelamento
+                </div>
+
+            </div>
+            """
+        )
+
+    elif not tem_conversa:
 
         st.html(
             """
@@ -1354,26 +2240,100 @@ with st.sidebar:
         )
 
     else:
+
         exibir_atalhos_sidebar()
+
+
+    # ========================================================
+    # AÇÃO SECUNDÁRIA DA ÁREA ATIVA
+    # ========================================================
+    #
+    # IMPORTANTE:
+    #
+    # Assistente Virtual:
+    #     + Nova conversa
+    #     → limpa somente o histórico do chat.
+    #
+    # Central de Reservas:
+    #     + Nova operação
+    #     → limpa somente o estado temporário da Central.
+    #
+    # Os dois fluxos são propositalmente separados.
+    # ========================================================
 
     st.divider()
 
-    st.button(
-        "＋ Nova conversa",
-        width="stretch",
-        key="nova_conversa",
-        on_click=limpar_conversa,
-    )
+    if (
+        st.session_state.area_ativa
+        == "chat"
+    ):
 
-    st.html(
-        """
-        <div class="aurora-sidebar-footnote">
-            As informações são fornecidas com base
-            no conteúdo oficial da pousada.
-        </div>
-        """
-    )
+        st.button(
+            "＋ Nova conversa",
+            key="botao_nova_conversa",
+            width="stretch",
+            on_click=limpar_conversa,
+        )
 
+    else:
+
+        st.button(
+            "＋ Nova operação",
+            key="botao_nova_operacao_central",
+            width="stretch",
+            on_click=resetar_estado_central,
+        )
+
+
+    # ========================================================
+    # RODAPÉ DA SIDEBAR
+    # ========================================================
+
+    if (
+        st.session_state.area_ativa
+        == "reservas"
+    ):
+
+        st.html(
+            """
+            <div class="aurora-sidebar-footnote">
+                Central fictícia desenvolvida para
+                demonstração acadêmica do projeto.
+                Não utilize dados pessoais reais.
+            </div>
+            """
+        )
+
+    else:
+
+        st.html(
+            """
+            <div class="aurora-sidebar-footnote">
+                As informações são fornecidas com base
+                no conteúdo oficial da pousada.
+            </div>
+            """
+        )
+
+
+# ============================================================
+# CENTRAL DE RESERVAS
+# ============================================================
+
+if (
+    st.session_state.area_ativa
+    == "reservas"
+):
+
+    exibir_central_reservas()
+
+    # Impede a renderização do chat abaixo da Central.
+    st.stop()
+
+
+# ============================================================
+# ASSISTENTE CONVERSACIONAL
+# ============================================================
 
 if not tem_conversa:
 
@@ -1474,6 +2434,10 @@ else:
     )
 
 
+# ============================================================
+# TELA INICIAL / HISTÓRICO
+# ============================================================
+
 if not tem_conversa:
 
     st.html(
@@ -1529,9 +2493,11 @@ if not tem_conversa:
         """
     )
 
-    coluna_1, coluna_2, coluna_3 = st.columns(
-        3,
-        gap="small",
+    coluna_1, coluna_2, coluna_3 = (
+        st.columns(
+            3,
+            gap="small",
+        )
     )
 
     with coluna_1:
@@ -1601,9 +2567,15 @@ if not tem_conversa:
         )
 
 else:
+
     exibir_historico()
+
     rolar_para_ultima_mensagem()
 
+
+# ============================================================
+# BARRA DO CHAT
+# ============================================================
 
 chave_barra_chat = (
     "aurora-chat-bar"
@@ -1614,18 +2586,26 @@ chave_barra_chat = (
 with st.container(
     key=chave_barra_chat,
 ):
+
     pergunta_digitada = st.chat_input(
         "Pergunte sobre sua estadia, a pousada ou Campos do Jordão...",
         key="entrada_chat",
     )
 
 
+# ============================================================
+# PERGUNTA PENDENTE / DIGITADA
+# ============================================================
+
 pergunta_sugerida = (
     st.session_state.pergunta_pendente
 )
 
 if pergunta_sugerida:
-    st.session_state.pergunta_pendente = None
+
+    st.session_state.pergunta_pendente = (
+        None
+    )
 
 
 pergunta = (
@@ -1633,8 +2613,19 @@ pergunta = (
     or pergunta_digitada
 )
 
+# ============================================================
+# PROCESSAMENTO DA PERGUNTA
+# ============================================================
 
 if pergunta:
+
+    # --------------------------------------------------------
+    # Registra a mensagem original do usuário.
+    #
+    # A pergunta atual entra primeiro no histórico porque as
+    # funções de contexto ignoram propositalmente a última
+    # mensagem ao procurar referências anteriores.
+    # --------------------------------------------------------
 
     st.session_state.mensagens.append(
         {
@@ -1642,6 +2633,74 @@ if pergunta:
             "content": pergunta,
         }
     )
+
+
+    # --------------------------------------------------------
+    # CONTEXTO PARA O RAG
+    #
+    # Serve para perguntas textuais dependentes da conversa,
+    # sem alterar o texto que aparece para o usuário.
+    # --------------------------------------------------------
+
+    pergunta_contextual_rag = (
+        contextualizar_pergunta(
+            pergunta
+        )
+    )
+
+
+    # --------------------------------------------------------
+    # CONTEXTO PARA A GALERIA
+    #
+    # É separado do contexto RAG para evitar que termos antigos
+    # como "pousada" ou "quartos" contaminem a seleção visual.
+    #
+    # None significa que a mensagem atual não é um pedido
+    # visual e a Gallery nem será consultada.
+    # --------------------------------------------------------
+
+    pergunta_contextual_visual = (
+        contextualizar_pergunta_visual(
+            pergunta
+        )
+    )
+
+
+    # --------------------------------------------------------
+    # DIAGNÓSTICO TEMPORÁRIO
+    #
+    # Aparece somente no terminal.
+    # Depois que a Rodada 2 estiver validada, podemos remover.
+    # --------------------------------------------------------
+
+    if (
+        pergunta_contextual_rag
+        != pergunta
+    ):
+
+        logger.info(
+            "Contexto RAG | "
+            "original=%r | contextual=%r",
+            pergunta,
+            pergunta_contextual_rag,
+        )
+
+
+    if pergunta_contextual_visual:
+
+        logger.info(
+            "Contexto visual | "
+            "original=%r | visual=%r",
+            pergunta,
+            pergunta_contextual_visual,
+        )
+
+
+    # --------------------------------------------------------
+    # Exibe a pergunta ORIGINAL.
+    #
+    # O usuário nunca vê as strings internas de contexto.
+    # --------------------------------------------------------
 
     with st.chat_message(
         "user",
@@ -1654,21 +2713,55 @@ if pergunta:
             )
         )
 
+
+    # --------------------------------------------------------
+    # Interações sociais simples continuam utilizando somente
+    # a mensagem original.
+    # --------------------------------------------------------
+
     resposta_social = (
         responder_interacao_social(
             pergunta
         )
     )
 
-    if resposta_social:
+    resposta_central = (
+        responder_intencao_central_reservas(
+            pergunta
+        )
+    )
+
+
+    # --------------------------------------------------------
+    # GALERIA
+    #
+    # A Gallery só é consultada se houver uma intenção visual
+    # contextualizada.
+    # --------------------------------------------------------
+
+    if (
+        resposta_social
+        or resposta_central
+    ):
+
         imagens = []
 
-    else:
+    elif pergunta_contextual_visual:
+
         imagens = (
             selecionar_imagens_seguras(
-                pergunta
+                pergunta_contextual_visual
             )
         )
+
+    else:
+
+        imagens = []
+
+
+    # --------------------------------------------------------
+    # RESPOSTA DO ASSISTENTE
+    # --------------------------------------------------------
 
     with st.chat_message(
         "assistant",
@@ -1679,15 +2772,36 @@ if pergunta:
 
             inicio = perf_counter()
 
+
+            # ==================================================
+            # 1. INTERAÇÃO SOCIAL LOCAL
+            # ==================================================
+
             if resposta_social:
 
-                resposta = resposta_social
+                resposta = (
+                    resposta_social
+                )
+
                 fontes = []
 
+            elif resposta_central:
+
+                resposta = resposta_central
+                fontes = []
+
+
+            # ==================================================
+            # 2. RESPOSTA VISUAL LOCAL
+            # ==================================================
+            #
+            # Se a memória visual identificou corretamente
+            # uma solicitação e existem imagens correspondentes,
+            # não há necessidade de chamar o RAG.
+            # ==================================================
+
             elif (
-                e_pedido_apenas_visual(
-                    pergunta
-                )
+                pergunta_contextual_visual
                 and imagens
             ):
 
@@ -1699,29 +2813,54 @@ if pergunta:
 
                 fontes = []
 
+
+            # ==================================================
+            # 3. RAG
+            # ==================================================
+            #
+            # Perguntas informativas e casos sem imagem
+            # correspondente seguem para o RAG.
+            # ==================================================
+
             else:
 
                 with st.spinner(
                     "Consultando informações da pousada..."
                 ):
 
-                    resultado = gerar_resposta(
-                        pergunta
+                    resultado = (
+                        gerar_resposta(
+                            pergunta_contextual_rag
+                        )
                     )
 
-                resposta = resultado[
-                    "resposta"
-                ]
-
-                fontes = resultado.get(
-                    "fontes",
-                    [],
+                resposta = (
+                    resultado[
+                        "resposta"
+                    ]
                 )
+
+                fontes = (
+                    resultado.get(
+                        "fontes",
+                        [],
+                    )
+                )
+
+
+            # ==================================================
+            # TEMPO
+            # ==================================================
 
             tempo_resposta = (
                 perf_counter()
                 - inicio
             )
+
+
+            # ==================================================
+            # EXIBIÇÃO
+            # ==================================================
 
             st.markdown(
                 preparar_markdown(
@@ -1738,6 +2877,11 @@ if pergunta:
                 f"{tempo_resposta:.2f} s"
             )
 
+
+            # ==================================================
+            # HISTÓRICO
+            # ==================================================
+
             st.session_state.mensagens.append(
                 {
                     "role": "assistant",
@@ -1748,6 +2892,7 @@ if pergunta:
             )
 
             st.rerun()
+
 
         except Exception:
 

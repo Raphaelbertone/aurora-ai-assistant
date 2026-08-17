@@ -1,6 +1,9 @@
 from langchain_ollama import OllamaEmbeddings
 
-from src.config import MODELO_VETORIZACAO_OLLAMA
+from src.config import (
+    MODELO_VETORIZACAO_OLLAMA,
+    OLLAMA_BASE_URL,
+)
 
 
 def obter_modelo_embeddings() -> OllamaEmbeddings:
@@ -13,7 +16,8 @@ def obter_modelo_embeddings() -> OllamaEmbeddings:
     """
 
     modelo_embeddings = OllamaEmbeddings(
-        model=MODELO_VETORIZACAO_OLLAMA
+        model=MODELO_VETORIZACAO_OLLAMA,
+        base_url=OLLAMA_BASE_URL,
     )
 
     return modelo_embeddings

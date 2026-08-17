@@ -28,6 +28,19 @@ MODELO_VETORIZACAO_OLLAMA = os.getenv(
     "bge-m3:567m",
 )
 
+# Endereço do serviço Ollama.
+# Em desenvolvimento e na OCI pode permanecer local.
+# Em ambientes com serviços separados, pode apontar
+# para outra instância/container.
+OLLAMA_BASE_URL = (
+    os.getenv(
+        "OLLAMA_BASE_URL",
+        "http://localhost:11434",
+    )
+    .strip()
+    .rstrip("/")
+)
+
 # Modelo de linguagem local
 MODELO_LINGUAGEM_OLLAMA = os.getenv(
     "MODELO_LINGUAGEM_OLLAMA",
