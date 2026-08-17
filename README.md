@@ -134,7 +134,7 @@ Os documentos são carregados, fragmentados e posteriormente transformados em re
 O projeto também possui um quinto documento:
 
 ```text
-docs/VOLUME 5.pdf
+docs/imagens/VOLUME 5.pdf
 ```
 
 O **Volume 5** reúne documentação complementar relacionada ao desenvolvimento e à estrutura técnica do Agente Aurora.
